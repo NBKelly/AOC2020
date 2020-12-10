@@ -18,7 +18,7 @@ public abstract class ConceptHelper {
     protected boolean DEBUG = false;
     protected boolean TIMER = false;
     protected boolean clean_exit = true;
-    protected boolean PAGE_ENABLED = true;
+    protected boolean PAGE_ENABLED = false;
     //number of significant places to use when running the timer
     //timer runs in nanoseconds, units = xxx.000000000 s, where
     //l(x..x) = magnitude
@@ -27,7 +27,9 @@ public abstract class ConceptHelper {
     protected Exception exception = null;
 
     protected DebugLogger logger = null;
-
+    protected boolean ALLOW_EMPTY = false;
+    protected String[] COMMENT_LINE = {"#"};
+    
     public ConceptHelper() {
 	self = this;
     }
@@ -388,7 +390,7 @@ public abstract class ConceptHelper {
 	return ln.nextLine();
     }
     
-    public boolean hasNextLine() {
+    public boolean hasNextLine() {	
 	if(ln == null || !ln.hasNextLine()) {
 	    //see if sc has another line	    
 	    //while lines exist to be read, and we haven't just fetched
@@ -619,7 +621,8 @@ public abstract class ConceptHelper {
 	String l = sc.nextLine();
 	line++;
 	token = 0;
-	boolean res = !(l.length() == 0 || l.charAt(0) == '#');
+	//printf("CHECK: ALLOW %b LEN %d%n", ALLOW_EMPTY, l.length());
+	boolean res = (l.length() > 0) || ALLOW_EMPTY;
 	if(res)
 	    ln = new Scanner(l);
 	return res;

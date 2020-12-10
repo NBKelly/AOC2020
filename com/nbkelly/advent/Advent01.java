@@ -71,60 +71,39 @@ public class Advent01 extends ConceptHelper {
 	Timer t = new Timer().start();
 
 	ArrayList<Integer> list = new ArrayList<Integer>();
-
 	while(hasNextInt()) {
 	    list.add(nextInt());
 	}
+	
 	t.split("File Processed");
 	DEBUGF("LIST SIZE: %d ENTRIES%n", list.size());
 	Collections.sort(list);
 	t.split("List sorted");
 	DEBUG();
-	
-	listmul(get_sum(0, target, list));
+
+	var p1_list = get_sum(0, target, list);
+	var p1_ans = listmul(p1_list);
+	DEBUGF("PART 1: ENTRIES = %d, %d%n", p1_list.get(0), p1_list.get(1));
+	DEBUGF("PART 1: ANSWER  = ");
+	println(p1_ans);
 	DEBUG();
 	t.split("Part one finished");
-	//DEBUGF("NUM OPS: %d%n", num_ops);
 	num_ops = 0;
-	DEBUG();
-
+	
 	//create a list with n entries
 	
 	var stream = IntStream.range(0, list.size()-1);
 	var res = stream.
 	    filter(i -> process(i, target, list).size() > 0)
 	    .findFirst();
-	//listmul(res);
-	/*stream.parallel().forEach(i -> {
-		if(parallel_done)
-		    return;
-		
-		int val = list.get(i);
-		int new_target = target - val;
-		var part_two = get_sum(i+1, new_target, list);
 
-		num_ops++;
-		if(part_two.size() > 0) {
-		    parallel_done = true;
-		    //t.split("BigInts are slow");
-		    part_two.push((long)val);
-		    listmul(part_two);
-		    return;
-		}
-		});*/
-	/*for(int i = 0; i < list.size(); i++) {
-	    var part_two = process(i, target, list);
-	    
-	    num_ops++;
-	    if(part_two.size() > 0) {
-		//t.split("BigInts are slow");
-		//part_two.push((long)val);
-		listmul(part_two);
-		break;
-	    }
-	    }*/
-
-	DEBUG();
+	//the recompute here really isn't costly. I'm too lazy to properly threadpool this,
+	//and streams don't actually give me a better result even if I run them in parallel
+	var res2 = process(res.getAsInt(), target, list);
+	DEBUGF("PART 2: ENTRIES = %d, %d, %d%n", res2.get(0), res2.get(1), res2.get(2));
+	DEBUGF("PART 1: ANSWER  = ");
+	println(listmul(res2));
+	
 	t.split("Part two finished");
 	//DEBUGF("NUM OPS: %d%n", num_ops);
 	num_ops = 0;
@@ -141,7 +120,6 @@ public class Advent01 extends ConceptHelper {
 
 	if(res.size() > 0) {
 	    res.push((long)val);
-	    listmul(res);
 	}
 
 	return res;
@@ -200,15 +178,15 @@ public class Advent01 extends ConceptHelper {
 	return res;
     }
 
-    public void listmul(LinkedList<Long> target) {
+    public BigInteger listmul(LinkedList<Long> target) {
 	BigInteger res = BigInteger.ONE;
 	//long res = 1;
 	for (long i : target) {
-	    println(i);
+	    //DEBUG(i);
 	    res = res.multiply(BigInteger.valueOf(i));
 	}
 
-	println(res);
+	return res;
     }
 
     //do any argument processing here
@@ -217,7 +195,7 @@ public class Advent01 extends ConceptHelper {
 	    try {
 		switch(argv[i]) {
 		case "-se" : IGNORE_UNCLEAN = false; break;
-		case "-d"  : DEBUG = true; IGNORE_UNCLEAN = false; TIMER = true; break;
+		case "-d"  : DEBUG = true; IGNORE_UNCLEAN = false; break;
 		case "-t"  : TIMER = true; break;
 		case "--target" :target = Integer.parseInt(argv[i+1]); i++; break;
 		case "-dt" :
