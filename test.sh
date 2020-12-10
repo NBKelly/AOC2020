@@ -27,10 +27,10 @@ then
 	    #the file compiles, let's check the input file exists
 	    if test -f "$sample"; then
 		#the user input also exists, run the file (in debug mode)
-		cat $sample | java $path -se
+		cat $sample | java $path -d
 	    else
 		if test -f "inputs/$sample"; then
-		    cat "inputs/"$sample | java $path -se
+		    cat "inputs/"$sample | java $path -d
 		else
 		    echo "Input file $sample does not exists"
 		fi
