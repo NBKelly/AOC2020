@@ -303,7 +303,7 @@ public abstract class ConceptHelper {
 	}
 	
 	public Timer start() {
-	    if(DEBUG || TIMER) {
+	    if(TIMER) {
 		this.startTime = this.splitTime = System.nanoTime();
 		TEBUG("Event - Timer Started");
 	    }
@@ -315,7 +315,7 @@ public abstract class ConceptHelper {
 	}
 	
 	public void split(String val) {
-	    if(DEBUG || TIMER) {
+	    if(TIMER) {
 		val = (val == null ? "" : (" - event: " + val));
 		
 		long split = System.nanoTime() - splitTime;
@@ -340,7 +340,7 @@ public abstract class ConceptHelper {
 	}
 
 	public void total(String val, boolean reset) {
-	    if(DEBUG || TIMER) {
+	    if(TIMER) {
 		val = (val == null ? "" : (" - event: " + val));
 		long split = System.nanoTime() - startTime;
 
@@ -375,7 +375,7 @@ public abstract class ConceptHelper {
 	}
 
 	public void reset() {
-	    if(DEBUG || TIMER) {
+	    if(TIMER) {
 		self.DEBUG("Event - Timer Reset");
 		startTime = splitTime = System.nanoTime();
 	    }

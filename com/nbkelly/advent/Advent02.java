@@ -66,18 +66,35 @@ public class Advent02 extends ConceptHelper {
 
 	ArrayList<String> lines = new ArrayList<String>();
 	int ct_passed = 0;
+	int ct_passed_1 = 0;
 	int ct_failed = 0;
+	int ct_failed_1 = 0;
 	while(hasNextLine()) {
 	    lines.add(nextLine());
 	    String pw = lines.get(lines.size()-1);
 
+	    if(isValid(pw))
+		ct_passed_1++;
+	    else
+		ct_failed_1++;
+		
 	    if(isValid_2(pw))
 		ct_passed++;
 	    else
 		ct_failed++;
 	}
 
-	printf("Passed: %d, Failed: %d%n", ct_passed, ct_failed);
+	DEBUGF("PART 1: PASSED: ");
+	print(ct_passed_1);
+	DEBUGF(" FAILED: %d", ct_failed_1);
+	println();
+
+	DEBUGF("PART 2: PASSED: ");
+	print(ct_passed);
+	DEBUGF(" FAILED: %d", ct_failed);
+	println();
+
+	//printf("Passed: %d, Failed: %d%n", ct_passed, ct_failed);
 	
 	t.total("Finished processing of file. ");
     }
@@ -126,7 +143,7 @@ public class Advent02 extends ConceptHelper {
 	for(int i = 0; i < argv.length; i++) {
 	    switch(argv[i]) {
 	    case "-se" : IGNORE_UNCLEAN = false; break;
-	    case "-d"  : DEBUG = true; IGNORE_UNCLEAN = false; TIMER = true; break;
+	    case "-d"  : DEBUG = true; IGNORE_UNCLEAN = false; break;
 	    case "-t"  : TIMER = true; break;
 	    case "-dt" :
 		Scanner tst = null;
