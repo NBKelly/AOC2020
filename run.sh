@@ -16,7 +16,8 @@ fi
 
 #validate that file exists first     
 if [[ $userinput =~ ^0[1-9]|[12][0-9]$ ]]   # checks that the input is within the desired range
-then    
+then
+    replace=$(./replace_index.sh $userinput)
     file="com/nbkelly/advent/Advent"$userinput".java"
     path="com.nbkelly.advent.Advent"$userinput
     if test -f "$file"; then
@@ -27,10 +28,12 @@ then
 	    #the file compiles, let's check the input file exists
 	    if test -f "$sample"; then
 		#the user input also exists, run the file (in debug mode)
-		cat $sample | java $path -se
+		eval "cat '$sample' | $replace java $path -se"
 	    else
+		exit
 		if test -f "inputs/$sample"; then
-		    cat "inputs/"$sample | java $path -se
+		    eval "cat 'inputs/$sample' | $replace java $path -se"
+		    #cat "inputs/"$sample | $replace java $path -se
 		else
 		    echo "Input file $sample does not exists"
 		fi
