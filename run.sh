@@ -1,5 +1,18 @@
 #!/bin/bash
 
+##process an arguments first
+prog_args=""
+arg_regex="-d|-t|-se"
+
+
+if [ $# -ne 0 ]
+then
+    while [[ "$1" =~ ${arg_regex} ]]; do
+	prog_args=$prog_args"$1 "
+	shift
+    done
+fi
+
 if [ $# -eq 1 ]
 then
     userinput=$1
@@ -28,11 +41,10 @@ then
 	    #the file compiles, let's check the input file exists
 	    if test -f "$sample"; then
 		#the user input also exists, run the file (in debug mode)
-		eval "cat '$sample' | $replace java $path -se"
+		eval "cat '$sample' | $replace java $path $prog_args"
 	    else
-		exit
 		if test -f "inputs/$sample"; then
-		    eval "cat 'inputs/$sample' | $replace java $path -se"
+		    eval "cat 'inputs/$sample' | $replace java $path $prog_args"
 		    #cat "inputs/"$sample | $replace java $path -se
 		else
 		    echo "Input file $sample does not exists"
