@@ -8,7 +8,7 @@ else
     read userinput
 fi
 
-if [[ $userinput =~ ^0[1-9]|[12][0-9]$ ]]   # checks that the input is within the desired range
+if [[ $userinput =~ ^0[1-9]|[12][0-9]([a-zA-Z]?)$ ]]   # checks that the input is within the desired range
 then
     file="com/nbkelly/advent/Advent"$userinput".java"
     if test -f "$file"; then

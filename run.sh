@@ -28,7 +28,7 @@ else
 fi
 
 #validate that file exists first     
-if [[ $userinput =~ ^0[1-9]|[12][0-9]$ ]]   # checks that the input is within the desired range
+if [[ $userinput =~ ^(0[1-9]|[12][0-9])([a-zA-Z]?)$ ]]   # checks that the input is within the desired range
 then
     replace=$(./replace_index.sh $userinput)
     file="com/nbkelly/advent/Advent"$userinput".java"
