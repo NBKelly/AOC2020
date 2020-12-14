@@ -4,9 +4,19 @@ package com.nbkelly.helper;
 import java.math.BigInteger;
 import java.util.Arrays;;
 
+/**
+ * @author      NB Kelly <nbkelly @ protonmail.com>
+ * @version     1.0          (current version number of program)
+ * @since       1.0          (the version of the package this class was first added to)
+ */
 public class Util {
-
-    //CONVERT ARRAYS TO BIGINTS
+    /**
+     * Converts long[] to BigInteger[]
+     *
+     * @param a array to convert
+     * @return BigInteger[] of input
+     * @since 1.0
+     */
     public static BigInteger[] bigIntArray(long[] a) {
 	BigInteger[] res  = new BigInteger[a.length];
 	for(int i = 0; i < a.length; i++)
@@ -14,6 +24,13 @@ public class Util {
 	return res;
     }
 
+    /**
+     * Converts int[] to BigInteger[]
+     *
+     * @param a array to convert
+     * @return BigInteger[] of input
+     * @since 1.0
+     */
     public static BigInteger[] bigIntArray(int[] a) {
 	BigInteger[] res  = new BigInteger[a.length];
 	for(int i = 0; i < a.length; i++)
@@ -21,7 +38,16 @@ public class Util {
 	return res;
     }
 
-
+    /**
+     * Gets the answer to chineseRemainder on input
+     *
+     * <p>Specifically, finds K such that nom % k = denom
+     *
+     * @param nom argument numbers
+     * @param denom expected denominators
+     * @return K such that nom % k = denom for all nom-denom
+     * @since 1.0
+     */
     public static BigInteger chineseRemainder(BigInteger[] nom, BigInteger[] denom) {
 	BigInteger product = Arrays.stream(nom).reduce(BigInteger.ONE, (i, j) -> i.multiply(j));
 
@@ -36,7 +62,10 @@ public class Util {
 	return sm.mod(product);
     }
 
-    
+    /**
+     * Used by chinese remainder
+     * @since 1.0
+     */
     private static BigInteger bat_soup(BigInteger a, BigInteger b) {
 	BigInteger b0 = b;
 	BigInteger x0 = BigInteger.ZERO;
