@@ -2,14 +2,49 @@ package com.nbkelly.helper;
 
 
 import java.math.BigInteger;
-import java.util.Arrays;;
-
+import java.util.Arrays;
+import java.util.TreeSet;
+import java.util.ArrayList;
 /**
  * @author      NB Kelly <nbkelly @ protonmail.com>
- * @version     1.0          (current version number of program)
- * @since       1.0          (the version of the package this class was first added to)
+ * @version     1.0
+ * @since       1.0
  */
 public class Util {
+    /**
+     * Helper interface for combinations function. Given two T, give back a T
+     * @author      NB Kelly <nbkelly @ protonmail.com>
+     * @version     1.0
+     * @since       1.0
+     */
+    public interface Combinator<T> {
+	TreeSet<T> combinations(T val, T component);
+    }
+
+
+    /**
+     * Gets all combinations/permutations of a list, based on a combinator and seed value
+     *
+     * @param seed seed value to base permutations on
+     * @param components components to permute
+     * @param combinator anonymous class that generates permutations based on a value and component
+     * @return TreeSet T of permutations
+     * @since 1.0
+     */
+    public static <T> TreeSet<T> combinations(T seed, ArrayList<T> components, Combinator<T> combinator) {
+	TreeSet<T> vals = new TreeSet<T>();
+	vals.add(seed);
+	
+	for(T component : components) {
+	    TreeSet<T> res = new TreeSet<T>();
+	    for(T v : vals)
+		res.addAll(combinator.combinations(v, component));
+	    vals.addAll(res);
+	}
+
+	return vals;
+    }
+    
     /**
      * Converts long[] to BigInteger[]
      *
