@@ -42,6 +42,48 @@ public final class Util {
 	else
 	    return val & ~bit;
     }
+
+    /**
+     * Reduces a matrix into an identity, if possible. Gives all values which can be singly determined.
+     *
+     * @param values The values to reduce.
+     * @return A list, T, containing (in index) all elements which can be ordered
+     * @since 1.0
+     */
+    public static final <T> ArrayList<T> singleElim(ArrayList<ArrayList<T>> values) {
+	ArrayList<T> t = new ArrayList<T>(values.size());
+
+	ArrayList<ArrayList<T>> re = new ArrayList<>();
+	for(var v : values)
+	    re.add(new ArrayList(v));
+	
+	for(int i = 0; i < values.size(); i++)
+	    t.add(null);
+	
+	while(true) {
+	    T singleton = null;
+	    for(int i = 0; i < values.size(); i++) {
+		if(values.get(i).size() == 1) {
+		    singleton = values.get(i).get(0);
+		    t.set(i, values.get(i).get(0));
+		    break;
+		}
+	    }
+
+	    if(singleton == null)
+		break;
+	    
+	    for(var li : values)
+		li.remove(singleton);
+	}
+
+	values.clear();
+	
+	for(var v : re)
+	    values.add(v);
+
+	return t;
+    }
     
     /**
      * Helper interface for combinations function. Given two T, give back a T
