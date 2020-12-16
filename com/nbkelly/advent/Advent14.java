@@ -146,15 +146,8 @@ public class Advent14 extends ConceptHelper {
 	    if(mask.charAt(i) == 'X')
 		continue;
 	    else {
-		int ch = 0;
-		if(mask.charAt(i) == '1')
-		    ch = 1;
-
-		long position = (long)Math.pow(2, index);
-		if(ch == 1)
-		    val |= position;
-		else if(ch == 0)
-		    val &= ~position;
+		boolean ch = mask.charAt(i) == '1';
+		val = Util.setBit(val, index, ch);//val.set
 	    }
 	}
 
@@ -166,16 +159,15 @@ public class Advent14 extends ConceptHelper {
 	
 	for(int i = 0; i < mask.length(); i++) {
 	    int index = mask.length() - 1 - i;
-	    long position = (long)Math.pow(2, index);
-	    
-	    if(mask.charAt(i) == 'X') {
-		floating.add(position);
+
+	    switch(mask.charAt(i)) {
+	    case 'X':
+		floating.add((long)index);
 		//set the position to zero too
-		val &= ~position;
-	    }
-	    else {
-		if(mask.charAt(i) == '1')
-		    val |= position;		
+		val = Util.setBit(val, index, false);
+		break;
+	    case '1':
+		val = Util.setBit(val, index, true);
 	    }
 	}
 
@@ -189,29 +181,11 @@ public class Advent14 extends ConceptHelper {
     private final Util.Combinator<Long> combinator = new Util.Combinator<Long>() {
 	    public TreeSet<Long> combinations(Long val, Long component) {
 		TreeSet<Long> res = new TreeSet<Long>();
-		res.add(val &= ~component);
-		res.add(val |= component);
+		res.add(Util.setBit(val, (int)(long)component, true));// &= ~component);
 		return res;
 	    }
 	};
 
-    public TreeSet<Long> combinations(ArrayList<Long> floats, long val) {
-	TreeSet<Long> vals = new TreeSet<Long>();
-	vals.add(val);
-
-	for(long pos : floats) {
-	    TreeSet<Long> res = new TreeSet<Long>();
-	    for(long v : vals) {
-		res.add(v &= ~pos);
-		res.add(v |= pos);
-	    }
-	    vals.addAll(res);
-	}
-
-	return vals;
-    }
-
-        
     //do any argument processing here
     public boolean processArgs(String[] argv) {
 	for(int i = 0; i < argv.length; i++) {

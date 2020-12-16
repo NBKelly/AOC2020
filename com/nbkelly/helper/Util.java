@@ -10,7 +10,39 @@ import java.util.ArrayList;
  * @version     1.0
  * @since       1.0
  */
-public class Util {
+public final class Util {
+    /**
+     * Sets the bit at a given position of an int
+     * @param val value to modify
+     * @param index index (0=rightmost) of the bit to set
+     * @param active true to set bit to 1, false to set to 0
+     * @return A copy of val with the one bit changed
+     * @since 1.0
+     */
+    public static final long setBit(long val, int index, boolean active) {
+	long bit = (1l << index);
+	if(active)
+	    return val | bit;
+	else
+	    return val & ~bit;
+    }
+
+    /**
+     * Sets the bit at a given position of an int
+     * @param val value to modify
+     * @param index index (0=rightmost) of the bit to set
+     * @param active true to set bit to 1, false to set to 0
+     * @return A copy of val with the one bit changed
+     * @since 1.0
+     */
+    public static final int setBit(int val, int index, boolean active) {
+	int bit = (1 << index);
+	if(active)
+	    return val | bit;
+	else
+	    return val & ~bit;
+    }
+    
     /**
      * Helper interface for combinations function. Given two T, give back a T
      * @author      NB Kelly <nbkelly @ protonmail.com>
@@ -31,7 +63,7 @@ public class Util {
      * @return TreeSet T of permutations
      * @since 1.0
      */
-    public static <T> TreeSet<T> combinations(T seed, ArrayList<T> components, Combinator<T> combinator) {
+    public static final <T> TreeSet<T> combinations(T seed, ArrayList<T> components, Combinator<T> combinator) {
 	TreeSet<T> vals = new TreeSet<T>();
 	vals.add(seed);
 	
@@ -52,7 +84,7 @@ public class Util {
      * @return BigInteger[] of input
      * @since 1.0
      */
-    public static BigInteger[] bigIntArray(long[] a) {
+    public static final BigInteger[] bigIntArray(long[] a) {
 	BigInteger[] res  = new BigInteger[a.length];
 	for(int i = 0; i < a.length; i++)
 	    res[i] = BigInteger.valueOf(a[i]);
@@ -66,7 +98,7 @@ public class Util {
      * @return BigInteger[] of input
      * @since 1.0
      */
-    public static BigInteger[] bigIntArray(int[] a) {
+    public static final BigInteger[] bigIntArray(int[] a) {
 	BigInteger[] res  = new BigInteger[a.length];
 	for(int i = 0; i < a.length; i++)
 	    res[i] = BigInteger.valueOf(a[i]);
@@ -83,7 +115,7 @@ public class Util {
      * @return K such that nom % k = denom for all nom-denom
      * @since 1.0
      */
-    public static BigInteger chineseRemainder(BigInteger[] nom, BigInteger[] denom) {
+    public static final BigInteger chineseRemainder(BigInteger[] nom, BigInteger[] denom) {
 	BigInteger product = Arrays.stream(nom).reduce(BigInteger.ONE, (i, j) -> i.multiply(j));
 
 	BigInteger p = BigInteger.ZERO;
@@ -101,7 +133,7 @@ public class Util {
      * Used by chinese remainder
      * @since 1.0
      */
-    private static BigInteger bat_soup(BigInteger a, BigInteger b) {
+    private static final BigInteger bat_soup(BigInteger a, BigInteger b) {
 	BigInteger b0 = b;
 	BigInteger x0 = BigInteger.ZERO;
 	BigInteger x1 = BigInteger.ONE;
