@@ -20,7 +20,7 @@ For example, the line ```04 empty``` means that when running problem 04, all emp
 
 ## Solutions
 Here's a write-up of all the solutions as I've done them.
-### 01
+### Day 01
 #### Part One: Find the two entries in a list that add up to 2020. Multiply them.
 This is a standard 2-sum problem. The good approaches are:
 
