@@ -56,4 +56,31 @@ Just print a count of all credentials where every field (except maybe the place 
 #### Part Two
 The same as part one, but now you have a few strings to parse to make sure all the fields are valid.
 
+### Day 05: Binary Boarding
+Each seat is assigned based on a binary space partition in the range (0 <= y <= 127), (0 <= x <= 7).
+
+#### Part One
+Most of the heavy liting can be done with the following function:
+
+```java
+int[] binary(int lower, int upper, boolean matched) {
+  if(matched)
+    return new int[]{lowHalf(lower, upper) +1, upper};
+  else
+    return new int[]{lower, lowHalf(lower, upper)};
+}
+
+int lowHalf(int low, int height) {
+  return (high + low)/2;
+}
+```
+To get the highest one, just sort (n log(n)) and take the top value, or seek through the list for the maximum value.
+
+#### Part Two
+We know from the problem description tha that the data constists of a contigious sequence with one gap
+
+This means there are two easy ways to solve this problem.
+
+1. Sort the list. Find any entry ```E``` (other than the first) where entry ```(E-1) + 1 != E```. The sort means this takes n log(n) time.
+2. Map all the values into an array of size E[min] - E[max]. Find the empty spot in the array. Your target belongs here. This can be done in linear time.
 
