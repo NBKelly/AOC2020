@@ -59,75 +59,80 @@ public class Advent05 extends ConceptHelper {
     
     // GCD, LCM:
     //   Single pairs, or lists of numbers are supported <>, []
+
+    private ArrayList<String> getInput() {
+	ArrayList<String> res = new ArrayList<String>();
+	while(hasNextLine())
+	    res.add(nextLine());	
+	return res;
+    }
     
     //this is basically your main method
     public void solveProblem() throws Exception {
 	Timer t = new Timer().start();
 
-	ArrayList<Integer> ids = new ArrayList<Integer>();
+	var input = getInput();
+	var ids	= getIDs(input);
+	int highest = Collections.max(ids); //O(n)
+
+	DEBUGF("PART ONE: ");
+	println(highest);
 	
-	while(hasNextLine()) {
-	    String line = nextLine();
-	    
+	DEBUGF("PART TWO: ");               //O(n)
+	println(missingEntry(ids));         //O(n)
+	t.total("Finished processing of file. ");
+    }
+
+    private ArrayList<Integer> getIDs(ArrayList<String> input) {
+	ArrayList<Integer> ids = new ArrayList<Integer>();
+
+	//this entire thing is O(n)
+	for(String line : input) {
 	    int[] y = {0, 127};
 	    int[] x = {0, 7};
 	    
-	    
-	    for(int i = 0; i < 7; i++) {
-		y = binary(y[0], y[1], 'F', 'B', line.charAt(i));
-	    }
-	    
-	    for(int i = 7; i < 10; i++) {
-		//printarr(x);
-		x = binary(x[0], x[1], 'L', 'R', line.charAt(i));
-	    }
+	    for(int i = 0; i < 7; i++)
+		y = binary(y[0], y[1], line.charAt(i) == 'B');
+	    	    
+	    for(int i = 7; i < 10; i++)
+		x = binary(x[0], x[1], line.charAt(i) == 'R');	    
 	    
 	    int row = y[0];
 	    int col = x[0];
 	    int id = row*8 + col;
 	    ids.add(id);
 	}
-	//printarr(x);
-	Collections.sort(ids);
-	//what's the highest ID?
-	DEBUGF("PART ONE: ");
-	println(ids.get(ids.size()-1));
 
-	
-
-	int validId = -1;
-	//print out missing ids
-	int lastId = ids.get(0);
-	for(int i = 1; i < ids.size(); i++) {
-	    int id = ids.get(i);
-	    if(id - lastId > 1)
-		validId = id-1;
-	    lastId = id;
-	}
-	DEBUGF("PART TWO: ");
-	println(validId);
-	
-	t.total("Finished processing of file. ");
+	return ids;
     }
+    
+    private int missingEntry(ArrayList<Integer> ids) {
+	int highest = Collections.max(ids); //O(n)
+	int lowest = Collections.min(ids);  //O(n)	
 
+	//this is all done in O(n)
+	int[] found = new int[highest-lowest + 1];
+	
+	int validId = -1;
+	for(int id : ids)
+	    found[id - lowest] = 1;
+	int myID = 0;
+	while(found[myID] == 1)
+	    myID++;	
 
-    //performs a binary chop on two integers, based on a given equality token
-    public int[] binary(int lower, int upper, char l_half, char u_half, char token) {
-	if(upper - lower == 1) {
-	    return token == u_half ? new int[] {upper, upper} : new int[]{lower, lower};
-	}
-	else {
-	    if(token == u_half)
-		return new int[]{lowHalf(lower, upper)+1, upper};
-	    else
-		return new int[]{lower, lowHalf(lower, upper)};
-	}
+	return  (myID + lowest);
+    }
+    
+
+    public int[] binary(int lower, int upper, boolean matched) {
+	if(matched)
+	    return new int[] {lowHalf(lower, upper)+1, upper};
+	else
+	    return new int[]{lower, lowHalf(lower, upper)};
     }
     
     private int lowHalf(int low, int high) {
-	int diff = high - low;
-	diff = diff/2;
-	return low + diff;
+	return (high + low)/2;
     }
     
     private void printarr(int[] arr) {
