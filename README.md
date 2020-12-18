@@ -20,7 +20,7 @@ For example, the line ```04 empty``` means that when running problem 04, all emp
 
 ## Solutions
 Here's a write-up of all the solutions as I've done them.
-### Day 01
+### Day 01: Report Repair
 #### Part One: Find the two entries in a list that add up to 2020. Multiply them.
 This is a standard 2-sum problem. The good approaches are:
 
@@ -32,3 +32,15 @@ Similar to part one, just iterate through the set of numbers and let target = ch
 
 1. Instead of solving for 2020, you solve for 2020-target
 2. Target is not a valid choice for 2-sum
+
+### Day 02: Password Philosophy
+This is just a bog-standard string parsing puzzle. 
+
+#### Part One: check that each string has between A and B instances of character C
+You can probably make a regex for this pretty easily.
+#### Part Two: check that each string has character C at index A XOR at index B
+Also easily doable with a regex. I did it like a caveman.
+
+### Day 03: Taboggan Trajectory
+Do you know  how to use the modulo command? There's not much more to it than that.
+Ignore the first line of input, it isn't relevant.
