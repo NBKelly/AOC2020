@@ -84,3 +84,50 @@ This means there are two easy ways to solve this problem.
 1. Sort the list. Find any entry ```entry[E]``` (other than the first) where entry ```entry[E-1] + 1 != entry[E]```. The sort means this takes n log(n) time.
 2. Map all the values into an array of size ```entry[min(entry)] - entry[max(max)]```. Find the empty spot in the array. Your target belongs here. This can be done in linear time, and means that both parts of the problem will be solved in linear time.
 
+
+
+### Day 18: Operation Order
+This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
+
+#### Part One
+Add all of your tokens to a stack (eric can only count on his fingers, so no number exceeds 9). Then, you just need to evaluate a stack of tokens.
+I used the pseudocode function here:
+
+```
+eval(stack):
+  #deal with empty inputs
+  if(stack is empty)
+    return 0
+  let token = stack.pop()
+  if(token == ")")
+    stack.push(eval(stack))
+    return eval(stack)
+  else
+    val = int(token)
+    token = stack.pop()
+    switch(token) {
+      "(": return val
+      "+": return val + eval(stack)
+      "*": return val * eval(stack)
+  ```
+  
+  #### Part Two
+  The change for part two is that addition now has higher precedence than multiplication. This can be done with a simple change to the eval function:
+  
+```
+eval(stack, component):
+  #deal with empty inputs
+  if(stack is empty)
+    return 0
+  let token = stack.pop()
+  if(token == ")")
+    stack.push(eval(stack, 0))
+    return eval(stack, component)
+  else
+    val = int(token) + component
+    token = stack.pop()
+    switch(token) {
+      "(": return val
+      "+": return eval(stack, val)
+      "*": return val * eval(stack, 0)
+  ```
