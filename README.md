@@ -44,3 +44,16 @@ Also easily doable with a regex. I did it like a caveman.
 ### Day 03: Taboggan Trajectory
 Do you know  how to use the modulo command? There's not much more to it than that.
 Ignore the first line of input, it isn't relevant.
+
+### Day 04: Passport Processing
+This is more string parsing.
+
+Split the entire input into categories based on empty lines, then for each category, place all entries into a map using the field name as the key.
+
+#### Part One
+Just print a count of all credentials where every field (except maybe the place of origin) exists
+
+#### Part Two
+The same as part one, but now you have a few strings to parse to make sure all the fields are valid.
+
+
