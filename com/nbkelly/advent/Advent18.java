@@ -120,6 +120,8 @@ public class Advent18 extends ConceptHelper {
     }
     
     public long eval(ArrayDeque<String> s) {
+	if(s.isEmpty())
+	    return 0;
 	String token = s.pop();
 	if(token.equals(")")) {
 	    long val = eval(s);
@@ -150,6 +152,8 @@ public class Advent18 extends ConceptHelper {
     }
 
     public long eval2(ArrayDeque<String> s, long component) {
+	if(s.isEmpty())
+	    return 0;
 	String token = s.pop();
 	if(token.equals(")")) {	    
 	    long val = eval2(s, 0);
