@@ -81,6 +81,6 @@ We know from the problem description tha that the data constists of a contigious
 
 This means there are two easy ways to solve this problem.
 
-1. Sort the list. Find any entry ```E``` (other than the first) where entry ```(E-1) + 1 != E```. The sort means this takes n log(n) time.
-2. Map all the values into an array of size E[min] - E[max]. Find the empty spot in the array. Your target belongs here. This can be done in linear time.
+1. Sort the list. Find any entry ```entry[E]``` (other than the first) where entry ```entry[E-1] + 1 != entry[E]```. The sort means this takes n log(n) time.
+2. Map all the values into an array of size ```entry[min(entry)] - entry[max(max)]```. Find the empty spot in the array. Your target belongs here. This can be done in linear time, and means that both parts of the problem will be solved in linear time.
 
