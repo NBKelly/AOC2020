@@ -1,6 +1,11 @@
 # ADVENT OF CODE 2020
 This is a set of all my solutions for Advent of Code 2020. They are (mostly) cleaned up, and are all produced in Java using my own workflow tools (with a few hacks thrown in).
 
+# Table of Contents
+1. [Project Structure](#Project-Structure)
+    1. [Adding a Solution](#Adding-a-solution)
+    2. [Replace.txt](#Replace.txt)
+
 ## Project Structure
 All of the solutions are available in the ```com/nbkelly/advent``` folder. They can all be run using ```run.sh``` script like so:
 
