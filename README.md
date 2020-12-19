@@ -11,6 +11,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     1. [Day 03](#day-03-toboggan-trajectory)
     1. [Day 04](#day-04-passport-processing)
     1. [Day 05](#day-05-binary-boarding)
+    1. [Day 05](#day-06-custom-customs)
     1. [Day 18](#day-18-operation-order)
 
 ## Project Structure
