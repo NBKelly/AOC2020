@@ -11,7 +11,8 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     1. [Day 03](#day-03-toboggan-trajectory)
     1. [Day 04](#day-04-passport-processing)
     1. [Day 05](#day-05-binary-boarding)
-    1. [Day 05](#day-06-custom-customs)
+    1. [Day 06](#day-06-custom-customs)
+    1. [Day 07](#day-06-handy-haversacks)
     1. [Day 18](#day-18-operation-order)
 
 ## Project Structure
@@ -107,6 +108,22 @@ You just want the union of each input in your set. This is as easy as adding eve
 
 #### Part Two
 You want the intersection of each input in your set. In java, this is A.retainAll(B).
+
+### Day 07: Handy Haversacks
+This is a combination of string parsing and tree-construction.
+First, it is necessary to process all of the input strings. They are all in the form of:
+
+1) [key] bags contain ([num] [key] bag(s?), )*[num [key] bag(s?).
+2) [key] bags contain no other bags.
+
+This data can be organized in the form ```map<key, list<key, quantity>>```.
+For the sake of simplicity, a similar collection can be made to track the (possible) ancestors of each bag. This is organized in the form ```map<key, list<key>>```
+
+#### Part One
+To get the set of all bags which can contain gold bags, simply start with the gold bag, and follow the tree upwards using the map of ancestors. Add all the ancestors to a set. You can additionally keep a set of all the seen ancestors to reduce checking nodes more than once.
+
+#### Part Two
+Now we want to find out how many bags a gold bag contains. This can be done recursively with memoization. Keep a set of all resolved bags. Then, for every bag in the current bag, check if it's children have been resolved. If they have, add up the number of bags they possess, then add the number of bags this bag itself possesses, making sure to store this value. This can be done in amortized O(n).
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
