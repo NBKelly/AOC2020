@@ -53,9 +53,11 @@ You can probably make a regex for this pretty easily.
 #### Part Two: check that each string has character C at index A XOR at index B
 Also easily doable with a regex. I did it like a caveman.
 
-### Day 03: Taboggan Trajectory
+### Day 03: Toboggan Trajectory
 Do you know  how to use the modulo command? There's not much more to it than that.
 Ignore the first line of input, it isn't relevant.
+
+Part two is just a check that you either know functions exist, or are willing to copy-paste your code four times.
 
 ### Day 04: Passport Processing
 This is more string parsing.
