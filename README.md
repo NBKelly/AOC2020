@@ -6,12 +6,12 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     1. [Adding a Solution](#Adding-a-solution)
     2. [Replace.txt](#Replace.txt)
 2. [Solutions](#Solutions)
-    1. [Day 01](#day-01:-report-repair)
-    1. [Day 02](#day-02:-password-philosophy)
-    1. [Day 03](#day-03:-toboggan-trajectory)
-    1. [Day 04](#day-04:-passport-processing)
-    1. [Day 05](#day-05:-binary-boarding)
-    1. [Day 18](#day-18:-operation-order)
+    1. [Day 01](#day-01-report-repair)
+    1. [Day 02](#day-02-password-philosophy)
+    1. [Day 03](#day-03-toboggan-trajectory)
+    1. [Day 04](#day-04-passport-processing)
+    1. [Day 05](#day-05-binary-boarding)
+    1. [Day 18](#day-18-operation-order)
 
 ## Project Structure
 All of the solutions are available in the ```com/nbkelly/advent``` folder. They can all be run using ```run.sh``` script like so:
