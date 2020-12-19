@@ -91,14 +91,21 @@ int lowHalf(int low, int height) {
 To get the highest one, just sort (n log(n)) and take the top value, or seek through the list for the maximum value.
 
 #### Part Two
-We know from the problem description tha that the data constists of a contigious sequence with one gap
+We know from the problem description that the data constists of a contigious sequence with one gap
 
 This means there are two easy ways to solve this problem.
 
 1. Sort the list. Find any entry ```entry[E]``` (other than the first) where entry ```entry[E-1] + 1 != entry[E]```. The sort means this takes n log(n) time.
 2. Map all the values into an array of size ```entry[min(entry)] - entry[max(max)]```. Find the empty spot in the array. Your target belongs here. This can be done in linear time, and means that both parts of the problem will be solved in linear time.
 
+### Day 06: Custom Customs
+This is another really easy one. Seperate the input by empty lines, then you have sets of inputs to process.
 
+#### Part One
+You just want the union of each input in your set. This is as easy as adding every single element to a set.
+
+#### Part Two
+You want the intersection of each input in your set. In java, this is A.retainAll(B).
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
