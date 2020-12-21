@@ -131,7 +131,23 @@ The general formula looks like this:
 The set E then becomes the set of all unique ancestors of the bag.
 
 #### Part Two
-Now we want to find out how many bags a gold bag contains. This can be done recursively with memoization. Keep a set of all resolved bags. Then, for every bag in the current bag, check if it's children have been resolved. If they have, add up the number of bags they possess, then add the number of bags this bag itself possesses, making sure to store this value. This can be done in amortized O(n).
+Now we want to find out how many bags a gold bag contains. This can be done recursively with memoization. Keep a set of all resolved bags. Then, for every bag in the current bag, check if it's children have been resolved. If they have, add up the number of bags they possess, then add the number of bags this bag itself possesses, making sure to store this value. Because of memoization, this can be done in amortized O(n\*k), where k is the average number of bag types that each bag contains.
+
+The algorithm looks something like this:
+```
+def count_children(key, map<key, [(key, quantity)]> all_children, map<key, long> memo):
+    var sum;
+    //this is all the children for a given key
+    [(key, quantity)] children = all_children.get(key)
+    
+    for (subkey, quantity) in children:
+        var intermediate = memo(subkey)
+        if ! intermediate:
+            intermediate = count_children(subkey, all_children, memo)
+            memo.put(subkey, intermediate)
+        sum += (intermediate + 1) * quantity
+    return sum
+```
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
