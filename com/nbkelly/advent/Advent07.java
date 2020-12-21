@@ -6,6 +6,9 @@ import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.TreeSet;
 import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.ArrayDeque;
 
 public class Advent07 extends ConceptHelper {
     //BE AWARE OF:
@@ -68,109 +71,120 @@ public class Advent07 extends ConceptHelper {
 	Timer t = new Timer().start();
 
 	var trim_str = new String[]{" bags", " bag", " bags.", " bag."};
+	
 	ArrayList<String> lines = new ArrayList<String>();
 	while(hasNextLine()) {
 	    lines.add(nextLine());
 	}
 
-	TreeMap<String, TreeMap<String, Integer>> bagmap = new TreeMap<>();
-	TreeMap<String, Integer> index = new TreeMap<>();
-	ArrayList<String> colors = new ArrayList<String>();
-	TreeMap<Integer, TreeSet<String>> ancestors = new TreeMap<>();
-	int[] canContainGold = new int[index.size()];
-	
-	for(int i = 0; i < lines.size(); i++) {
-	    String[] sides = lines.get(i).split(" bags contain ");
-	    
-	    String key = sides[0];
-	    index.put(key, i);
-	    colors.add(key);
-	    
-	    TreeMap<String, Integer> ct = new TreeMap<>();
-	    bagmap.put(key, ct);
-	    if(sides[1].equals("no other bags."))
-		continue;
-	    
-	    String[] contents = sides[1].split(", ");
-	    	    	    
-	    for(String s : contents) {
-		//extract the number
-		var numero = extractNumeral(s);
-		var targetcolor = trim(numero[1], trim_str);
-		ct.put(targetcolor, Integer.parseInt(numero[0]));
-	    }
-	}
+	HashMap<String, ArrayList<Capacity>> bags = new HashMap<>();
+	HashMap<String, ArrayList<String>> ancestors = new HashMap<>();
 
-	TreeSet<String> containsGold = new TreeSet<String>();
-	TreeSet<String> remainder = new TreeSet<String>();
-	remainder.addAll(colors);
-	//once we're here, we know of every bag and what bags it can (directly) contain
-	//how do we work this: let's try a crawl
-	boolean foundResult = true;
-	String target = "shiny gold";
-	while(foundResult) {
-	    foundResult = false;
-	    TreeSet<String> newRemainder = new TreeSet<String>();
-	    for(String s : remainder) {
-		//see if it directly contains gold
-		TreeMap<String, Integer> contents = bagmap.get(s);
-		if(contents.size() > 0) {
-		    boolean foundOne = false;
-		    //for each of the things in it, see if it's either shiny gold or contains shiny gold
-		    for(String col : contents.keySet()) {
-			if(col.equals(target) || containsGold.contains(col)) {
-			    containsGold.add(s);
-			    foundResult = foundOne = true;
-			    break;
-			}
+	for(String s : lines) {
+	    String[] segments = s.split(" bags contain ");
+	    String key = segments[0];
+	    //println(key);
+
+	    if(segments[1].equals("no other bags."))
+		bags.put(key, new ArrayList<Capacity>());
+	    else {
+		String[] components = segments[1].split(", ");
+		ArrayList<Capacity> caps = new ArrayList<>();
+		for(int i = 0; i < components.length; i++) {
+		    var tmp = extractNumeral(components[i]);
+		    int count = Integer.parseInt(tmp[0]);
+		    String col = trim(tmp[1], trim_str);
+		    Capacity c = new Capacity(col, count);
+		    caps.add(c);
+		    //println(c.bagColor);
+
+		    //add the key to our set of ancestors
+		    if(ancestors.containsKey(col))
+			ancestors.get(col).add(key);
+		    else {
+			ArrayList<String> a = new ArrayList<String>();
+			a.add(key);
+			ancestors.put(col, a);
 		    }
-		    //if we found nothing here, then just add it to our remainder list
-		    if(!foundOne)
-			newRemainder.add(s);
 		}
-		else {
-		    //contains nothing -  we do not add it to the remainder
-		}
+		bags.put(key, caps);
 	    }
-	    remainder = newRemainder;
 	}
 
 	DEBUGF("PART ONE: ");
-	println(containsGold.size());
+	println(number_of_distinct_ancestors("shiny gold", ancestors));
 
 	DEBUGF("PART TWO: ");
-	println(count_total("shiny gold", bagmap));
-
-	t.total("Finished processing of file. ");
+	println(number_of_children("shiny gold", bags, new HashMap<String, Long>()));
     }
 
-    private int count_total(String _target, TreeMap<String, TreeMap<String, Integer>> state) {
-	LinkedList<String> stack_target = new LinkedList<String>();
-	LinkedList<Integer> stack_count = new LinkedList<Integer>();
+    //memo-ize the results to stop looking at things too many times    
+    private long number_of_children(String target, HashMap<String, ArrayList<Capacity>> children,
+				    HashMap<String, Long> memo) {
+	//we need to add the children of this bag, and their children
 
-	stack_target.add(_target);
-	stack_count.add(1);
-	int total = 0;
+	long sum = 0;
+	var local_children = children.get(target);
 
-	while(stack_target.size() > 0) {
-	    String target = stack_target.pop();
-	    int mult = stack_count.pop();
+	for(Capacity c : local_children) {
+	    //get the sum
+	    String key = c.bagColor;
+	    long quantity = c.quantity;
+	    var memo_result = memo.get(key);
+	    if(memo_result != null) {
+		sum += quantity * (memo_result + 1);
+	    }
+	    else {
+		long single = number_of_children(key, children, memo);
+		memo.put(key, single);
 
-	    TreeMap<String, Integer> microstate = state.get(target);
-	    for(String s : microstate.keySet()) {
-		//get the thing and the number
-		//put them in our stack
-		//add to our total
-		int count = microstate.get(s);
-		total += count*mult;
-		stack_target.add(s);
-		stack_count.add(count*mult);
+		sum += quantity * (single+1);
 	    }
 	}
 
-	return total;
+	return sum;
     }
     
+    private int number_of_distinct_ancestors(String target, HashMap<String, ArrayList<String>> ancestors) {
+	HashSet<String> visited = new HashSet<String>();
+
+	ArrayDeque<String> stack = new ArrayDeque<String>();
+
+	stack.add(target);
+
+	int num_passes = 0;
+	while(stack.size() > 0) {
+	    num_passes++;
+	    String current = stack.pop();
+	    if(!visited.contains(current)) {
+		visited.add(current);
+		var direct_ancestors = ancestors.get(current);
+		if(direct_ancestors != null) {
+		    for(String ancestor : direct_ancestors) {
+			stack.push(ancestor);
+		    }
+		}
+	    }
+	}
+
+	//roughly height * average_ancestors
+	//println(num_passes);
+
+	//subtract 1 because we count the target itself, and the target is not it's own ancestor
+	return visited.size() - 1;
+    }
+
+    private class Capacity {
+	public String bagColor;
+	public int quantity;
+
+	public Capacity(String key, int quantity) {
+	    this.bagColor = key;
+	    this.quantity = quantity;
+	}
+    }
+
+    //extract a number from a string, and then return the rest of the string
     private String[] extractNumeral(String s) {
 	int len = 0;
 	while(s.charAt(len) >= '0' && s.charAt(len) <= '9')
@@ -178,7 +192,9 @@ public class Advent07 extends ConceptHelper {
 
 	return new String[]{s.substring(0, len), s.substring(len+1)};
     }
-    
+
+    //if a string ends with any of the values in targets, remove that value
+    //otherwise, return that string
     private String trim(String input, String[] targets) {
 	for(String s : targets) {
 	    if(input.endsWith(s)) {
