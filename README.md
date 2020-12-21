@@ -7,13 +7,14 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     2. [Replace.txt](#Replace.txt)
 2. [Solutions](#Solutions)
     1. [Day 01](#day-01-report-repair)
-    1. [Day 02](#day-02-password-philosophy)
-    1. [Day 03](#day-03-toboggan-trajectory)
-    1. [Day 04](#day-04-passport-processing)
-    1. [Day 05](#day-05-binary-boarding)
-    1. [Day 06](#day-06-custom-customs)
-    1. [Day 07](#day-07-handy-haversacks)
-    1. [Day 18](#day-18-operation-order)
+    2. [Day 02](#day-02-password-philosophy)
+    3. [Day 03](#day-03-toboggan-trajectory)
+    4. [Day 04](#day-04-passport-processing)
+    5. [Day 05](#day-05-binary-boarding)
+    6. [Day 06](#day-06-custom-customs)
+    7. [Day 07](#day-07-handy-haversacks)
+    7. [Day 08](#day-08-handheld-halting)
+    8. [Day 18](#day-18-operation-order)
 
 ## Project Structure
 All of the solutions are available in the ```com/nbkelly/advent``` folder. They can all be run using ```run.sh``` script like so:
@@ -122,8 +123,64 @@ For the sake of simplicity, a similar collection can be made to track the (possi
 #### Part One
 To get the set of all bags which can contain gold bags, simply start with the gold bag, and follow the tree upwards using the map of ancestors. Add all the ancestors to a set. You can additionally keep a set of all the seen ancestors to reduce checking nodes more than once.
 
+The general formula looks like this:
+
+1) Start with an empty stack, S, and an empty set, E
+2) Add all ancestors of the target to S and to E
+3) While the stack is not empty, take the first element of the stack. For each of it's ancestors not in E, add that ancestor to S and E
+
+The set E then becomes the set of all unique ancestors of the bag.
+
 #### Part Two
-Now we want to find out how many bags a gold bag contains. This can be done recursively with memoization. Keep a set of all resolved bags. Then, for every bag in the current bag, check if it's children have been resolved. If they have, add up the number of bags they possess, then add the number of bags this bag itself possesses, making sure to store this value. This can be done in amortized O(n).
+Now we want to find out how many bags a gold bag contains. This can be done recursively with memoization. Keep a set of all resolved bags. Then, for every bag in the current bag, check if it's children have been resolved. If they have, add up the number of bags they possess, then add the number of bags this bag itself possesses, making sure to store this value. Because of memoization, this can be done in amortized O(n\*k), where k is the average number of bag types that each bag contains.
+
+The algorithm looks something like this:
+```
+def count_children(key, map<key, [(key, quantity)]> all_children, map<key, long> memo):
+    var sum;
+    //this is all the children for a given key
+    [(key, quantity)] children = all_children.get(key)
+    
+    for (subkey, quantity) in children:
+        var intermediate = memo(subkey)
+        if ! intermediate:
+            intermediate = count_children(subkey, all_children, memo)
+            memo.put(subkey, intermediate)
+        sum += (intermediate + 1) * quantity
+    return sum
+```
+
+### Day 08: Handheld Halting
+This problem is a little bit interesting. A program is given to you consisting of three operation types: A) acc [val] B) jmp [val] and C) nop [val].
+The given program does not halt. At some point, it will enter into a loop. Because there is no choice in this language, there is no way to escape a loop, and therefore the program can never halt.
+
+The instructions work as follows:
+
+```
+acc [val]: modifies the accumulator register by the given value
+jmp [val]: modifies the program counter by the given value
+nop [val]: does nothing (the program counter increments by one)
+```
+
+#### Part One
+Find the first instruction (the value of the program counter) that is executed more than once.
+This is pretty simple to accompish. Keep a set of executed instructions, and the first time your pc clashes with that set then you have the answer. Alternatively, make a boolean array the size of the program and use that to keep track. Both are O(n).
+
+#### Part Two
+One of the instructions in the program can be changed, either from *nop x* to *jmp x*, or from *jmp x* to *nop x*. You need to find out which one, change it, and then execute the program. When the program has finished executing, the program counter should read equal to the line count of the program.
+
+This, too, can be done in O(n). To determine which instruction can be flipped, use the following steps:
+
+1) Build a mapping PC to PC based on the instructions in the list. Every instruction leads to exactly one other PC, but some PC's have multiple direct ancestors. Hence, Map<Int, [Int]>. We want a mapping of a given PC, and all instructions that result in that PC.
+2) Starting at the terminating state (PC = program size), determine all states which lead to this state. Add these (and also the terminating state itself) to a set T of terminating states, and then for each of these states, repeat the process. The end result should be a set of all states which, if reached, guarantee the termination of the program. 
+3) Run the program as normal. The first time that replacing a nop/jmp instruction would result in the PC entering the set of terminating states, then that instruction is replaced.
+4) Execution then continues as normal until the program halts. The value of the accumulator is the answer.
+
+All of this can be done in O(n) time. Observe that:
+1) To build a mapping from pc->[pc] can be done iteratively in linear time
+2) Use of hashmaps allows for O(1) lookups and insertions
+3) Determining the set of terminating states requires that each state be looked at no more than once, so this is O(n)
+4) The program has no loops, so execution occurs in O(n)
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
