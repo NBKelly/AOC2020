@@ -169,8 +169,18 @@ This is pretty simple to accompish. Keep a set of executed instructions, and the
 #### Part Two
 One of the instructions in the program can be changed, either from *nop x* to *jmp x*, or from *jmp x* to *nop x*. You need to find out which one, change it, and then execute the program. When the program has finished executing, the program counter should read equal to the line count of the program.
 
-This, too, can be done in O(n).
+This, too, can be done in O(n). To determine which instruction can be flipped, use the following steps:
 
+1) Build a mapping PC to PC based on the instructions in the list. Every instruction leads to exactly one other PC, but some PC's have multiple direct ancestors. Hence, Map<Int, [Int]>. We want a mapping of a given PC, and all instructions that result in that PC.
+2) Starting at the terminating state (PC = program size), determine all states which lead to this state. Add these (and also the terminating state itself) to a set T of terminating states, and then for each of these states, repeat the process. The end result should be a set of all states which, if reached, guarantee the termination of the program. 
+3) Run the program as normal. The first time that replacing a nop/jmp instruction would result in the PC entering the set of terminating states, then that instruction is replaced.
+4) Execution then continues as normal until the program halts. The value of the accumulator is the answer.
+
+All of this can be done in O(1) time. Observe that:
+1) To build a mapping from pc->[pc] can be done iteratively in linear time
+2) Use of hashmaps allows for O(1) lookups and insertions
+3) Determining the set of terminating states requires that each state be looked at no more than once, so this is O(n)
+4) The program has no loops, so execution occurs in O(n)
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
