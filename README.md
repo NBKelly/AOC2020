@@ -5,7 +5,8 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
 1. [Project Structure](#Project-Structure)
     1. [Adding a Solution](#Adding-a-solution)
     2. [Replace.txt](#Replace.txt)
-2. [Solutions](#Solutions)
+2. [Problem Ratings](#Problem-Ratings)
+3. [Solutions](#Solutions)
     1. [Day 01](#day-01-report-repair)
     2. [Day 02](#day-02-password-philosophy)
     3. [Day 03](#day-03-toboggan-trajectory)
@@ -32,6 +33,8 @@ Open a soltuon to edit using the ```./workflow.sh``` command, like so:
 The workflow tool was original designed to cull all empty lines in input. To work around this, the run.sh pipeline will perform replacements on any input file mentioned in the replace.txt file. 
 
 For example, the line ```04 empty``` means that when running problem 04, all empty lines are replaced with the word empty. This is very hacky, but it works well enough for now. I'll probably fix my tool (or replace it entirely) at some point to do away with this requirement.
+
+## Problem Ratings
 
 ## Solutions
 Here's a write-up of all the solutions as I've done them.
