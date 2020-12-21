@@ -1,6 +1,20 @@
 # ADVENT OF CODE 2020
 This is a set of all my solutions for Advent of Code 2020. They are (mostly) cleaned up, and are all produced in Java using my own workflow tools (with a few hacks thrown in).
 
+# Table of Contents
+1. [Project Structure](#Project-Structure)
+    1. [Adding a Solution](#Adding-a-solution)
+    2. [Replace.txt](#Replace.txt)
+2. [Solutions](#Solutions)
+    1. [Day 01](#day-01-report-repair)
+    1. [Day 02](#day-02-password-philosophy)
+    1. [Day 03](#day-03-toboggan-trajectory)
+    1. [Day 04](#day-04-passport-processing)
+    1. [Day 05](#day-05-binary-boarding)
+    1. [Day 06](#day-06-custom-customs)
+    1. [Day 07](#day-07-handy-haversacks)
+    1. [Day 18](#day-18-operation-order)
+
 ## Project Structure
 All of the solutions are available in the ```com/nbkelly/advent``` folder. They can all be run using ```run.sh``` script like so:
 
@@ -41,9 +55,11 @@ You can probably make a regex for this pretty easily.
 #### Part Two: check that each string has character C at index A XOR at index B
 Also easily doable with a regex. I did it like a caveman.
 
-### Day 03: Taboggan Trajectory
+### Day 03: Toboggan Trajectory
 Do you know  how to use the modulo command? There's not much more to it than that.
 Ignore the first line of input, it isn't relevant.
+
+Part two is just a check that you either know functions exist, or are willing to copy-paste your code four times.
 
 ### Day 04: Passport Processing
 This is more string parsing.
@@ -77,10 +93,80 @@ int lowHalf(int low, int height) {
 To get the highest one, just sort (n log(n)) and take the top value, or seek through the list for the maximum value.
 
 #### Part Two
-We know from the problem description tha that the data constists of a contigious sequence with one gap
+We know from the problem description that the data constists of a contigious sequence with one gap
 
 This means there are two easy ways to solve this problem.
 
 1. Sort the list. Find any entry ```entry[E]``` (other than the first) where entry ```entry[E-1] + 1 != entry[E]```. The sort means this takes n log(n) time.
 2. Map all the values into an array of size ```entry[min(entry)] - entry[max(max)]```. Find the empty spot in the array. Your target belongs here. This can be done in linear time, and means that both parts of the problem will be solved in linear time.
 
+### Day 06: Custom Customs
+This is another really easy one. Seperate the input by empty lines, then you have sets of inputs to process.
+
+#### Part One
+You just want the union of each input in your set. This is as easy as adding every single element to a set.
+
+#### Part Two
+You want the intersection of each input in your set. In java, this is A.retainAll(B).
+
+### Day 07: Handy Haversacks
+This is a combination of string parsing and tree-construction.
+First, it is necessary to process all of the input strings. They are all in the form of:
+
+1) [key] bags contain ([num] [key] bag(s?), )*[num [key] bag(s?).
+2) [key] bags contain no other bags.
+
+This data can be organized in the form ```map<key, list<key, quantity>>```.
+For the sake of simplicity, a similar collection can be made to track the (possible) ancestors of each bag. This is organized in the form ```map<key, list<key>>```
+
+#### Part One
+To get the set of all bags which can contain gold bags, simply start with the gold bag, and follow the tree upwards using the map of ancestors. Add all the ancestors to a set. You can additionally keep a set of all the seen ancestors to reduce checking nodes more than once.
+
+#### Part Two
+Now we want to find out how many bags a gold bag contains. This can be done recursively with memoization. Keep a set of all resolved bags. Then, for every bag in the current bag, check if it's children have been resolved. If they have, add up the number of bags they possess, then add the number of bags this bag itself possesses, making sure to store this value. This can be done in amortized O(n).
+
+### Day 18: Operation Order
+This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
+
+#### Part One
+Add all of your tokens to a stack (eric can only count on his fingers, so no number exceeds 9). Then, you just need to evaluate a stack of tokens.
+I used the pseudocode function here:
+
+```
+eval(stack):
+  #deal with empty inputs
+  if(stack is empty)
+    return 0
+  let token = stack.pop()
+  if(token == ")")
+    stack.push(eval(stack))
+    return eval(stack)
+  else
+    val = int(token)
+    token = stack.pop()
+    switch(token) {
+      "(": return val
+      "+": return val + eval(stack)
+      "*": return val * eval(stack)
+  ```
+  
+  #### Part Two
+  The change for part two is that addition now has higher precedence than multiplication. This can be done with a simple change to the eval function:
+  
+```
+eval(stack, component):
+  #deal with empty inputs
+  if(stack is empty)
+    return 0
+  let token = stack.pop()
+  if(token == ")")
+    stack.push(eval(stack, 0))
+    return eval(stack, component)
+  else
+    val = int(token) + component
+    token = stack.pop()
+    switch(token) {
+      "(": return val
+      "+": return eval(stack, val)
+      "*": return val * eval(stack, 0)
+  ```
