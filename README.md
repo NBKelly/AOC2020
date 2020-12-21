@@ -176,7 +176,7 @@ This, too, can be done in O(n). To determine which instruction can be flipped, u
 3) Run the program as normal. The first time that replacing a nop/jmp instruction would result in the PC entering the set of terminating states, then that instruction is replaced.
 4) Execution then continues as normal until the program halts. The value of the accumulator is the answer.
 
-All of this can be done in O(1) time. Observe that:
+All of this can be done in O(n) time. Observe that:
 1) To build a mapping from pc->[pc] can be done iteratively in linear time
 2) Use of hashmaps allows for O(1) lookups and insertions
 3) Determining the set of terminating states requires that each state be looked at no more than once, so this is O(n)
