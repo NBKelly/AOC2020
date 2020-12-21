@@ -181,6 +181,33 @@ All of this can be done in O(n) time. Observe that:
 2) Use of hashmaps allows for O(1) lookups and insertions
 3) Determining the set of terminating states requires that each state be looked at no more than once, so this is O(n)
 4) The program has no loops, so execution occurs in O(n)
+Because no operation is greater than O(n), the entire process is O(n).
+
+### Day 09: Encoding Error
+Day 9 involves reading through a stream of encoded data and finding the first invalid entry.
+The rules of the encoding are as follows:
+
+1) The first sequence of numbers transmitted is the preamble, which has size N, and has no restrictions
+2) A window is kept of the last N numbers seen
+3) For a number to be valid, it must be the sum of two (numerically) *different* numbers in the window
+
+For this problem, the preamble/window size given is 25.
+
+#### Part One
+Part one asks to find the first number in the sequence which does not adhere to the encoding rules. Solving this requires several steps:
+
+1) Read the preamble, add all to window of size *W*
+2) Read the next number, *N*
+3) If *N* is not the sum of two *different* numbers in the window, halt
+4) remove the oldest number in the window
+5) Add *N* to the window
+6) GOTO 2
+
+Steps 1, 2, 4, 5 and 6 are all constant time operations. However, step 3 requires one of the follwing:
+1) If the window is sorted, it can be solved in O(W) time.
+2) Otherwise, you can use the hashtable method of solving 2sum, which will take O(W) time.
+
+Thus, this can be solved in O(N*W) time.
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
