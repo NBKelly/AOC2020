@@ -122,6 +122,14 @@ For the sake of simplicity, a similar collection can be made to track the (possi
 #### Part One
 To get the set of all bags which can contain gold bags, simply start with the gold bag, and follow the tree upwards using the map of ancestors. Add all the ancestors to a set. You can additionally keep a set of all the seen ancestors to reduce checking nodes more than once.
 
+The general formula looks like this:
+
+1) Start with an empty stack, S, and an empty set, E
+2) Add all ancestors of the target to S and to E
+3) While the stack is not empty, take the first element of the stack. For each of it's ancestors not in E, add that ancestor to S and E
+
+The set E then becomes the set of all unique ancestors of the bag.
+
 #### Part Two
 Now we want to find out how many bags a gold bag contains. This can be done recursively with memoization. Keep a set of all resolved bags. Then, for every bag in the current bag, check if it's children have been resolved. If they have, add up the number of bags they possess, then add the number of bags this bag itself possesses, making sure to store this value. This can be done in amortized O(n).
 
