@@ -7,13 +7,14 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     2. [Replace.txt](#Replace.txt)
 2. [Solutions](#Solutions)
     1. [Day 01](#day-01-report-repair)
-    1. [Day 02](#day-02-password-philosophy)
-    1. [Day 03](#day-03-toboggan-trajectory)
-    1. [Day 04](#day-04-passport-processing)
-    1. [Day 05](#day-05-binary-boarding)
-    1. [Day 06](#day-06-custom-customs)
-    1. [Day 07](#day-07-handy-haversacks)
-    1. [Day 18](#day-18-operation-order)
+    2. [Day 02](#day-02-password-philosophy)
+    3. [Day 03](#day-03-toboggan-trajectory)
+    4. [Day 04](#day-04-passport-processing)
+    5. [Day 05](#day-05-binary-boarding)
+    6. [Day 06](#day-06-custom-customs)
+    7. [Day 07](#day-07-handy-haversacks)
+    7. [Day 08](#day-08-handheld-halting)
+    8. [Day 18](#day-18-operation-order)
 
 ## Project Structure
 All of the solutions are available in the ```com/nbkelly/advent``` folder. They can all be run using ```run.sh``` script like so:
@@ -148,6 +149,28 @@ def count_children(key, map<key, [(key, quantity)]> all_children, map<key, long>
         sum += (intermediate + 1) * quantity
     return sum
 ```
+
+### Day 08: Handheld Halting
+This problem is a little bit interesting. A program is given to you consisting of three operation types: A) acc [val] B) jmp [val] and C) nop [val].
+The given program does not halt. At some point, it will enter into a loop. Because there is no choice in this language, there is no way to escape a loop, and therefore the program can never halt.
+
+The instructions work as follows:
+
+```
+acc [val]: modifies the accumulator register by the given value
+jmp [val]: modifies the program counter by the given value
+nop [val]: does nothing (the program counter increments by one)
+```
+
+#### Part One
+Find the first instruction (the value of the program counter) that is executed more than once.
+This is pretty simple to accompish. Keep a set of executed instructions, and the first time your pc clashes with that set then you have the answer. Alternatively, make a boolean array the size of the program and use that to keep track. Both are O(n).
+
+#### Part Two
+One of the instructions in the program can be changed, either from *nop x* to *jmp x*, or from *jmp x* to *nop x*. You need to find out which one, change it, and then execute the program. When the program has finished executing, the program counter should read equal to the line count of the program.
+
+This, too, can be done in O(n).
+
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
