@@ -172,7 +172,7 @@ public class Advent08 extends ConceptHelper {
     }
 
     private ProgramState runCode(Program program, State startingState,
-				 TreeSet<Integer> term) {
+				 HashSet<Integer> term) {
 	int pc = startingState.pc;
 	int acc = startingState.acc;
 	ArrayList<State> history = new ArrayList<State>();
@@ -222,7 +222,7 @@ public class Advent08 extends ConceptHelper {
     private ProgramState evaluate_graph(Program program) {
 	int target_pc = program.size();
 	
-	TreeMap<Integer, ArrayList<Integer>> targets = new TreeMap<>();
+	HashMap<Integer, ArrayList<Integer>> targets = new HashMap<>();
 	
 	for(int i = 0; i < program.size(); i++) {
 	    Line instruction = program.line(i);//String[] inst = program.get(i).split(" ");
@@ -247,7 +247,7 @@ public class Advent08 extends ConceptHelper {
 	}
 
 	//now we want to start at the end and backtrack until we have exhausted all options
-	TreeSet<Integer> terminating_states = terminating(targets, target_pc);
+	HashSet<Integer> terminating_states = terminating(targets, target_pc);
 
 	//terminating states should now be a list of all states that lead to program termination
 	//now all we need to do is run the program, replacing an instruction the first time that replacement
@@ -255,9 +255,9 @@ public class Advent08 extends ConceptHelper {
 	return runCode(program, new State(0, 0), terminating_states);
     }
 
-    public TreeSet<Integer> terminating(TreeMap<Integer, ArrayList<Integer>> map, int target) {
+    public HashSet<Integer> terminating(HashMap<Integer, ArrayList<Integer>> map, int target) {
 	LinkedList<Integer> valid = new LinkedList<Integer>();
-	TreeSet<Integer> term = new TreeSet<Integer>();
+	HashSet<Integer> term = new HashSet<Integer>();
 
 	valid.add(target);
 
@@ -314,12 +314,12 @@ public class Advent08 extends ConceptHelper {
 	return false; //false - exit program
     }
     
-    public Advent08b() {
+    public Advent08() {
 	super();
     }
     
     public static void main(String[] argv) {
-	new Advent08b().process(argv);
+	new Advent08().process(argv);
     }
 
     
