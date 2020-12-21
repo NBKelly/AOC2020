@@ -35,7 +35,34 @@ The workflow tool was original designed to cull all empty lines in input. To wor
 For example, the line ```04 empty``` means that when running problem 04, all empty lines are replaced with the word empty. This is very hacky, but it works well enough for now. I'll probably fix my tool (or replace it entirely) at some point to do away with this requirement.
 
 ## Problem Ratings
-
+| Problem | Complexity (Part One) | Complexity (Part Two) |
+| ------- |:---------------------:|:---------------------:|
+| Day 01  | O(N) | O(N<sup>2</sup>)|
+| Day 02  |
+| Day 03  |
+| Day 04  |
+| Day 05  |
+| Day 06  |
+| Day 07  |
+| Day 08  |
+| Day 09  |
+| Day 10  |
+| Day 11  |
+| Day 12  |
+| Day 13  |
+| Day 14  |
+| Day 15  |
+| Day 16  |
+| Day 17  |
+| Day 01  |
+| Day 18  |
+| Day 19  |
+| Day 20  |
+| Day 21  |
+| Day 22  |
+| Day 23  |
+| Day 24  |
+| Day 25  |
 ## Solutions
 Here's a write-up of all the solutions as I've done them.
 ### Day 01: Report Repair
