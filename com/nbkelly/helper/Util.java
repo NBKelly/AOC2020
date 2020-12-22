@@ -1,13 +1,17 @@
 package com.nbkelly.helper;
 
-
 import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.TreeSet;
+import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.List;
+
+
 /**
  * @author      NB Kelly <nbkelly @ protonmail.com>
- * @version     1.0
+ * @version     1.1
  * @since       1.0
  */
 public final class Util {
@@ -55,7 +59,7 @@ public final class Util {
 
 	ArrayList<ArrayList<T>> re = new ArrayList<>();
 	for(var v : values)
-	    re.add(new ArrayList(v));
+	    re.add(new ArrayList<T>(v));
 	
 	for(int i = 0; i < values.size(); i++)
 	    t.add(null);
@@ -134,6 +138,23 @@ public final class Util {
     }
 
     /**
+     * List[BigInteger] to BigInteger[]
+     *
+     * @param a list to convert
+     * @return BigInteger[] of input
+     * @since 1.1
+     */
+    public static final BigInteger[] bigIntArray(List<BigInteger> a) {
+	BigInteger[] res  = new BigInteger[a.size()];
+	int counter = 0;
+	for(BigInteger b : a) {
+	    res[counter++] = b;
+	}
+
+	return res;
+    }
+
+    /**
      * Converts int[] to BigInteger[]
      *
      * @param a array to convert
@@ -147,6 +168,109 @@ public final class Util {
 	return res;
     }
 
+    /**
+     * Finds the 2-sum of a sequence of numbers, if it exists.
+     * <p>
+     * Finds the 2-sum of a sequence of numbers, if it exists. The 2-sum is two numbers in the list
+     * which sum up to the given target. 
+     *
+     * @param values the values for which to find a 2sum
+     * @param target the target sum to find
+     * @return Pair(T) containing the first two unique values which to the target, or null
+     * @since 1.1
+     */
+    @SuppressWarnings("unchecked")
+    public static final <T extends Number> Pair<T, T> twoSum(T[] values, T target) {
+	//assertion: each value in values is unique
+	HashSet<T> hashed_values = new HashSet<T>();
+
+	
+	for(int index = 0; index < values.length; index++)
+	    hashed_values.add(values[index]);
+
+	checking:
+	for(int index = 0; index < values.length; index++) {
+	    //if hashed_values contains target - value[index], then value[index] + value are the right targets
+	    var check_target = add(target, neg(values[index]));
+	    if(hashed_values.contains(check_target)) {
+		//check that values[index] != check_target
+		if(check_target.equals(values[index]))
+		    continue checking;
+
+		//assert check_target.getClass() == T.class;
+		return new Pair<T, T>(values[index], (T)check_target);
+	    }
+	}
+
+
+	//what are the requrements for 2sum? we need to find that target - valueA = valueB
+	return null;
+    }
+
+    /**
+     * Returns Number * -1 for generic classes of type Number
+     *
+     * @param a number to multiply by -1
+     * @return a * -1
+     * @since 1.1
+     */
+    private static final <T extends Number> Number neg(T a)
+	throws IllegalArgumentException {
+	if(a.getClass() == Short.class)
+	    return (Short)a *(Short)(short)(-1);// (Short)b;
+	else if(a.getClass() == Long.class)
+	    return (Long)a * -1l;
+	else if(a.getClass() == Integer.class)
+	    return (Integer)a * -1;
+	else if(a.getClass() == Float.class)
+	    return (Float)a * -1f;
+	else if(a.getClass() == Double.class)
+	    return (Double)a *1d;
+	else if(a.getClass() == Byte.class)
+	    return (Byte)a * (Byte)(byte)-1;
+	else if(a.getClass() == BigInteger.class)
+	    return ((BigInteger)a).multiply(BigInteger.valueOf(-1));
+	else if(a.getClass() == BigDecimal.class)
+	    return ((BigDecimal)a).multiply(BigDecimal.valueOf(-1));
+
+	throw new IllegalArgumentException("Operands of type " + a.getClass() + " are not supported");
+	//	return null;
+
+    }
+
+    /**
+     * Returns NumberA * NumberB for generic classes of type Number
+     *
+     * @param a number to add
+     * @param b number to add
+     * @return a +b
+     * @since 1.1
+     */
+    private static final <T extends Number> Number add(T a, T b)
+	throws IllegalArgumentException  {
+	assert a.getClass() == b.getClass(): "Type mismatch with generic add(a, b)";; //I think this is mandatory?
+
+	if(a.getClass() == Short.class)
+	    return (Short)a + (Short)b;
+	else if(a.getClass() == Long.class)
+	    return (Long)a + (Long)b;
+	else if(a.getClass() == Integer.class)
+	    return (Integer)a + (Integer)b;
+	else if(a.getClass() == Float.class)
+	    return (Float)a + (Float)b;
+	else if(a.getClass() == Double.class)
+	    return (Double)a + (Double)b;
+	else if(a.getClass() == Byte.class)
+	    return (Byte)a + (Byte)b;
+	else if(a.getClass() == BigInteger.class)
+	    return ((BigInteger)a).add((BigInteger)b);
+	else if(a.getClass() == BigDecimal.class)
+	    return ((BigDecimal)a).add((BigDecimal)b);
+
+	throw new IllegalArgumentException("Operands of type " + a.getClass() + " are not supported");
+	//	return null;
+    }
+    
     /**
      * Gets the answer to chineseRemainder on input
      *

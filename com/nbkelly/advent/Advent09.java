@@ -2,9 +2,12 @@ package com.nbkelly.advent;
 import com.nbkelly.helper.DebugLogger;
 import com.nbkelly.helper.ConceptHelper;
 import java.util.Scanner;
+
 import java.util.*;
 import java.math.BigInteger;
-import java.util.Collections;
+
+import com.nbkelly.helper.Util;
+
 public class Advent09 extends ConceptHelper {
     //BE AWARE OF:
     //  DEBUG, IGNORE UNCLEAN, TIMER, DEBUG_TIME_MAGNITUDE
@@ -66,26 +69,25 @@ public class Advent09 extends ConceptHelper {
 	Timer t = new Timer().start();
 	
 	ArrayList<BigInteger> sequence = new ArrayList<>();
+	//if the size of the preamble needs to be changed, it's this variable
+	int preamble = 25;	
+	
 	while(hasNextBigInteger()) {
 	    sequence.add(nextBigInteger());
 	}
 	
-	//if the size of the preamble needs to be changed, it's this
-	int winsize = 25;
-	
 	t.split("File read");
-	var part1 = findInvalid(sequence, winsize);
+	
 	DEBUGF("PART ONE: ");
-	println(part1);
+	BigInteger p1 = findInvalid(sequence, preamble);
+	println(p1);
 	
-
-	t.split("Part 1 Done");
 	
-	var part2 = findSequence(sequence, part1);
-	t.split("We're sorting for no reason");
-	var weakness = min(part2).add(max(part2));//part2.getFirst().add(part2.getLast());
 	DEBUGF("PART TWO: ");
-	println(weakness);
+	var part2 = findSequence(sequence, p1);
+	var weakness = min(part2).add(max(part2));
+	println(weakness);	
+	
 	t.total("Finished processing of file. ");
     }
 
@@ -105,6 +107,38 @@ public class Advent09 extends ConceptHelper {
 	return max;
     }
 
+    private BigInteger findInvalid(ArrayList<BigInteger> sequence, int preamble_size) {
+	LinkedList<BigInteger> window = new LinkedList<>();	
+	int winsize = preamble_size;
+	int index = 0;
+	
+	
+	for(; index < preamble_size; index++)
+	    window.add(sequence.get(index));
+
+
+	BigInteger term = BigInteger.ZERO;
+	
+	while(index < sequence.size()) {
+	    var value = sequence.get(index++);
+	    var sum = Util.twoSum(Util.bigIntArray(window), value);
+
+	    //println(value);
+	    if(sum != null) {
+		window.pop();
+		window.add(value);
+	    }
+	    else {
+		term = value;
+		break;
+	    }
+	}
+
+	index--;
+
+	return term;
+    }
+    
     private LinkedList<BigInteger> findSequence(ArrayList<BigInteger> sequence, BigInteger target) {
 	LinkedList<BigInteger> res = new LinkedList<BigInteger>();
 
@@ -138,62 +172,7 @@ public class Advent09 extends ConceptHelper {
 	}
     }
 
-    private BigInteger findInvalid(ArrayList<BigInteger> sequence, int win_size) {
-	//sliding window setup
-	LinkedList<BigInteger> window = new LinkedList<BigInteger>();
-	LinkedList<LinkedList<BigInteger>> sums = new LinkedList<>();
-	
-	for(int i = 0; i < win_size; i++) {
-	    window.add(sequence.get(i));
-	}
 
-	//get all the sums within the window
-	for(int i = 0; i < window.size(); i++) {
-	    LinkedList<BigInteger> il =  new LinkedList<BigInteger>();
-	    for(int j = i+1; j < window.size(); j++) {
-		il.add(window.get(i).add(window.get(j)));
-	    }
-	    sums.add(il);
-	}
-
-	for(int i = window.size(); i < sequence.size(); i++) {
-	    //check it's valid
-	    var val = sequence.get(i);
-
-	    boolean valid = false;
-	    //check if any of the sums contain it
-	    for(LinkedList<BigInteger> li : sums) {
-		if(li.contains(val)) {
-		    valid = true;
-		    break;
-		}
-	    }
-
-	    if(valid) {
-		//remove the leftmost sum
-		sums.pop();
-		window.pop();
-		
-		for(int j = 0; j < window.size(); j++) {
-		    var res = window.get(j);
-		    sums.get(j).add(val.add(res));
-		}
-
-		window.add(val);
-		
-		LinkedList<BigInteger> newList = new LinkedList<>();
-		sums.add(newList);
-	    }
-	    else {
-		return val;
-	    }
-	}
-
-	//null indicates no valid result
-	return null;
-
-    }
-        
     //do any argument processing here
     public boolean processArgs(String[] argv) {
 	for(int i = 0; i < argv.length; i++) {
