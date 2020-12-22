@@ -71,9 +71,66 @@ public class Advent10 extends ConceptHelper {
 	}
 	Collections.sort(inputs);
 
+	boolean use_hash =false;
+	if(use_hash) {
+	    using_hash(inputs);
+	}
+	else {
+	    using_array(inputs, 3);
+	}
+	
+	t.total("Finished processing of file. ");
+    }
+
+    private void using_array(ArrayList<Integer> inputs, int max_diff) {
+	int max_value = max(inputs);
+
+	BigInteger[] set = new BigInteger[max_value+1];
+
+	for(int i : inputs)
+	    set[i] = BigInteger.ZERO;
+	
+	set[0] = BigInteger.ONE;
+
+	int[] diffs = new int[max_diff + 1];
+	int last_index = 0;
+	for(int i = 1; i <= max_value; i++) {
+	    var ct = set[i];
+	    if(ct != null) {
+		//check the diff
+		int diff = i - last_index;
+		//this will break if max_jolt_diff > diffs.size
+		diffs[diff]++;
+		last_index = i;
+
+		BigInteger sum = BigInteger.ZERO;
+		
+		for(int j = -3; j < 0; j++) {
+		    if(i + j < 0)
+			continue;
+		    var tar = set[i+j];
+		    if(tar != null) {
+			sum = sum.add(tar);			
+		    }		    
+		}
+
+		set[i] = sum;
+	    }
+	}
+
+	DEBUGF("PART ONE: ");
+	println(diffs[1] * (1 + diffs[3]));
+	DEBUGF("PART TWO: ");
+	println(set[max_value]);
+	    
+    }
+
+    private void using_hash(ArrayList<Integer> inputs) {
 	//determine the maximum value in the collection - this could be done inline faster during map insertion
 	int max_value = max(inputs);
 
+	
+	
 	HashMap<Integer, BigInteger> mappings = new HashMap<Integer, BigInteger>();
 
 	for(int i : inputs)
@@ -109,8 +166,7 @@ public class Advent10 extends ConceptHelper {
 	println(_1_jolt_diffs * (1 + _3_jolt_diffs));
 	DEBUGF("PART TWO: ");
 	println(mappings.get(max_value));
-	
-	t.total("Finished processing of file. ");
+
     }
 
     private int max(ArrayList<Integer> inputs) {
