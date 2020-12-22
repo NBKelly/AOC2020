@@ -14,8 +14,9 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     5. [Day 05](#day-05-binary-boarding)
     6. [Day 06](#day-06-custom-customs)
     7. [Day 07](#day-07-handy-haversacks)
-    7. [Day 08](#day-08-handheld-halting)
-    8. [Day 18](#day-18-operation-order)
+    8. [Day 08](#day-08-handheld-halting)
+    9. [Day 09](#day-09-encoding-error)
+    18. [Day 18](#day-18-operation-order)
 
 ## Project Structure
 All of the solutions are available in the ```com/nbkelly/advent``` folder. They can all be run using ```run.sh``` script like so:
@@ -35,17 +36,20 @@ The workflow tool was original designed to cull all empty lines in input. To wor
 For example, the line ```04 empty``` means that when running problem 04, all empty lines are replaced with the word empty. This is very hacky, but it works well enough for now. I'll probably fix my tool (or replace it entirely) at some point to do away with this requirement.
 
 ## Problem Ratings
-| Problem | Complexity (Part One) | Complexity (Part Two) |
-| ------- |:---------------------:|:---------------------:|
-| Day 01  | O(N) | O(N<sup>2</sup>)|
-| Day 02  |
-| Day 03  |
-| Day 04  |
-| Day 05  |
-| Day 06  |
-| Day 07  |
-| Day 08  |
-| Day 09  |
+Here are my ratings for each problem, and what the time complexity of my solutions happens to be.
+In almost every case, N is equal to the line count. Otherwise, N will be noted.
+
+| Problem | Complexity (Part One) | Complexity (Part Two) | Comments |
+| ------- |:---------------------:|:---------------------:|:-------- |
+| Day 01  | *O(N)*                  | *O(N<sup>2</sup>)*      |
+| Day 02  | *O(NK)* | *O(N)* | K=average_password_size |
+| Day 03  | *O(N)* | *O(NK)* | K=slope_count |
+| Day 04  | *O(N)* | *O(N)* |
+| Day 05  | *O(N)* | *O(N)* | 
+| Day 06  | *O(SE)*| *O(SE)* | S = average number of elements to put into set, E = input count |
+| Day 07  | *O(NK)* | amortized *O(NK)* | K = average number of children or ancestors per element. Amortized through memoization. |
+| Day 08  | *O(N)* | *O(N)* |
+| Day 09  | *O(N W)*| *O(N log(K))* | W = window_size, K = max_sequence_size* |
 | Day 10  |
 | Day 11  |
 | Day 12  |
@@ -237,7 +241,34 @@ Steps 1, 2, 4, 5 and 6 are all constant time operations. However, step 3 require
 1) If the window is sorted, it can be solved in O(W) time.
 2) Otherwise, you can use the hashtable method of solving 2sum, which will take O(W) time.
 
-Thus, this can be solved in O(N*W) time.
+Thus, this can be solved in O(*N W*) time.
+
+#### Part Two
+Find the first sequence of numbers with size of at least two which sums to the non-conforming number from Part One.
+
+This can be done in O(*N log(K)*) time (I think - the sequence has the property that numbers tend to increase, which means sequences get shorter the further we search), where *K* is the length of the maximum sequence during the search.
+
+The following algorithm is used:
+```
+[values], target
+--------------------
+start = end = 0
+sequence = new list()
+sum = 0
+while(true):
+  //cannot have sequence of size < 2
+  if sum < target || end - start < 2:
+    sequence.add(values[end])
+    sum += values[end]
+    end++;
+  else if sum < target:
+    sum -= list.pop() //first element
+    start++
+  else
+    return sequence
+```
+
+The weakness can then be found with ```min(sequence) * max(sequence)```.
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
