@@ -148,7 +148,7 @@ public class Advent09 extends ConceptHelper {
 	int end = 0;
 
 	while(true) {
-	    if(current.compareTo(target) < 0) {
+	    if(current.compareTo(target) < 0 || end - start < 2) {
 		//get the value at the current address
 		var tmp = sequence.get(end);
 		res.add(tmp);
@@ -161,12 +161,6 @@ public class Advent09 extends ConceptHelper {
 		start++;
 	    }
 	    else { //equals
-		if(end - start == 1) {
-		    var tmp = sequence.get(end);
-		    res.add(tmp);
-		    current = current.add(tmp);
-		    end++;
-		}
 		return res;
 	    }	    
 	}
