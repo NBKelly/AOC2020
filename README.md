@@ -5,7 +5,8 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
 1. [Project Structure](#Project-Structure)
     1. [Adding a Solution](#Adding-a-solution)
     2. [Replace.txt](#Replace.txt)
-2. [Solutions](#Solutions)
+2. [Problem Ratings](#Problem-Ratings)
+3. [Solutions](#Solutions)
     1. [Day 01](#day-01-report-repair)
     2. [Day 02](#day-02-password-philosophy)
     3. [Day 03](#day-03-toboggan-trajectory)
@@ -33,6 +34,35 @@ The workflow tool was original designed to cull all empty lines in input. To wor
 
 For example, the line ```04 empty``` means that when running problem 04, all empty lines are replaced with the word empty. This is very hacky, but it works well enough for now. I'll probably fix my tool (or replace it entirely) at some point to do away with this requirement.
 
+## Problem Ratings
+| Problem | Complexity (Part One) | Complexity (Part Two) |
+| ------- |:---------------------:|:---------------------:|
+| Day 01  | O(N) | O(N<sup>2</sup>)|
+| Day 02  |
+| Day 03  |
+| Day 04  |
+| Day 05  |
+| Day 06  |
+| Day 07  |
+| Day 08  |
+| Day 09  |
+| Day 10  |
+| Day 11  |
+| Day 12  |
+| Day 13  |
+| Day 14  |
+| Day 15  |
+| Day 16  |
+| Day 17  |
+| Day 01  |
+| Day 18  |
+| Day 19  |
+| Day 20  |
+| Day 21  |
+| Day 22  |
+| Day 23  |
+| Day 24  |
+| Day 25  |
 ## Solutions
 Here's a write-up of all the solutions as I've done them.
 ### Day 01: Report Repair
@@ -181,6 +211,33 @@ All of this can be done in O(n) time. Observe that:
 2) Use of hashmaps allows for O(1) lookups and insertions
 3) Determining the set of terminating states requires that each state be looked at no more than once, so this is O(n)
 4) The program has no loops, so execution occurs in O(n)
+Because no operation is greater than O(n), the entire process is O(n).
+
+### Day 09: Encoding Error
+Day 9 involves reading through a stream of encoded data and finding the first invalid entry.
+The rules of the encoding are as follows:
+
+1) The first sequence of numbers transmitted is the preamble, which has size N, and has no restrictions
+2) A window is kept of the last N numbers seen
+3) For a number to be valid, it must be the sum of two (numerically) *different* numbers in the window
+
+For this problem, the preamble/window size given is 25.
+
+#### Part One
+Part one asks to find the first number in the sequence which does not adhere to the encoding rules. Solving this requires several steps:
+
+1) Read the preamble, add all to window of size *W*
+2) Read the next number, *N*
+3) If *N* is not the sum of two *different* numbers in the window, halt
+4) remove the oldest number in the window
+5) Add *N* to the window
+6) GOTO 2
+
+Steps 1, 2, 4, 5 and 6 are all constant time operations. However, step 3 requires one of the follwing:
+1) If the window is sorted, it can be solved in O(W) time.
+2) Otherwise, you can use the hashtable method of solving 2sum, which will take O(W) time.
+
+Thus, this can be solved in O(N*W) time.
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
