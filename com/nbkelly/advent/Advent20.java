@@ -138,7 +138,8 @@ public class Advent20 extends ConceptHelper {
 
 	var inserted = findImage(assembled, dragonImage());
 
-	printlist(inserted);
+	printlist_pretty(inserted);
+	//printlist(inserted);
 	
 	println("ROUGHNESS: " + count_char(inserted));
 
@@ -258,7 +259,7 @@ public class Advent20 extends ConceptHelper {
 	    }
 	}
 	    
-	printlist(res);
+	println(res);
 	
 	return res;
     }
@@ -332,6 +333,22 @@ public class Advent20 extends ConceptHelper {
     public void printlist(ArrayList<String> li) {
 	for(String s : li)
 	    println(s);
+	println();
+    }
+
+    public void printlist_pretty(ArrayList<String> li) {	
+	for(String s : li) {
+	    StringBuilder line = new StringBuilder("");	
+	    for(int i = 0; i < s.length(); i++) {
+		if(s.charAt(i) == '.')
+		    line.append(".");
+		else if (s.charAt(i) == '#')
+		    line.append("#");
+		else
+		    line.append(color("O", Color.GREEN));
+	    }
+	    println(line.toString());
+	}
 	println();
     }
 
