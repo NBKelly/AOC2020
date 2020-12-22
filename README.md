@@ -78,7 +78,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 07  | *O(NK)* | amortized *O(NK)* | K = average number of children or ancestors per element. Amortized through memoization. |
 | Day 08  | *O(N)* | *O(N)* |
 | Day 09  | *O(N W)*| *O(N log(K))* | W = window_size, K = max_sequence_size* |
-| Day 10  |
+| Day 10  | *O(3N)* | *O(3N)* | Abuses properties of data. O(N log N) for more complicated cases. If (Maxjumps-1) < log(N), then using a hashmap gives superior (worst case) speed. |
 | Day 11  |
 | Day 12  |
 | Day 13  |
@@ -86,7 +86,6 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 15  |
 | Day 16  |
 | Day 17  |
-| Day 01  |
 | Day 18  | O(NT) | O(NT) | T = average token count per line 
 | Day 19  |
 | Day 20  |
