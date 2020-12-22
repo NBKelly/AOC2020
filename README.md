@@ -16,6 +16,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     7. [Day 07](#day-07-handy-haversacks)
     8. [Day 08](#day-08-handheld-halting)
     9. [Day 09](#day-09-encoding-error)
+    10. [Day 10](#day-10-adapter-array)
     18. [Day 18](#day-18-operation-order)
 
 ## Project Structure
@@ -296,6 +297,25 @@ while(true):
 ```
 
 The weakness can then be found with ```min(sequence) * max(sequence)```.
+
+### Day 10: Adapter Array
+Our laptop is out of power and need to be charged. We have a bag of adapters, each with unique *joltages*, and our device has a *joltage* of max(input) + 3. Each adapter can take an input of *j-1*, *j-2*, or *j-3* jolts. The charging outlet has a charge of 0 *jolts*.
+
+#### Part One
+If we use every adapter at once, what is the distribution of joltages we achieve? The answer is given as ```sum(1-jolt-jumps)``` \* ```sum(3-jolt-jumps)```.
+
+To achieve this result, there are two general methods:
+1) We know the size of the collection, and we can determine in linear time what the max and min values are. A hashmap can be made of adapter joltages, which will have worst case space of *3N*. Then, keys can be checked iteratively. Where a match is found, compare that to the last match to determine the joltage jump. This takes, in the worst case, 3N time and space.
+2) The collection can be sorted, which takes *O(N log N)* time. Then, it can be walked iterated through.
+Don't forget to add the +1 for jumping from the adapter to your device.
+
+#### Part Two
+We know a single way to connect the adapters using every single adapter, but how many ways can we connect them using any number of adapters that bridges 0 to max_value? This can actually be done in "linear" time too, because of the properties of our data. The entries are all unique, and each value is only "linked" with values 3 joltages above or below it. With the sorted list, perform the following:
+* Create a map <Integer, Integer> using our original collection as the key, and initializing each value to 0.
+* For each key in the collection, if that key is in range of 0, set the value to 1. Then, if (key-1, key-2, key-3) exist, add thier values to the value for this key.
+The result is the value for the final key in the collection, which is the number of valid ways to link 0 joltages to the laptop using our collection of adapters.
+
+At most, each key takes three comparisons, so this can be done in *O(N)*. The data had to be sorted first, however, so that makes this *O(N log N)*. A similar trick to the hashmap one in part 1 can be done here, however, to turn this entire problem into *O(3N)* in time and space complexity.
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
