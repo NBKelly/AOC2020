@@ -71,62 +71,53 @@ public class Advent10 extends ConceptHelper {
 	}
 	Collections.sort(inputs);
 
+	//determine the maximum value in the collection - this could be done inline faster during map insertion
+	int max_value = max(inputs);
+
+	HashMap<Integer, BigInteger> mappings = new HashMap<Integer, BigInteger>();
+
+	for(int i : inputs)
+	    mappings.put(i, BigInteger.ZERO);
+
+	mappings.put(0, BigInteger.ONE);
 	
+	int _1_jolt_diffs = 0;
+	int _3_jolt_diffs = 0;
 
-	TreeMap<Integer, Integer> jsize = new TreeMap<Integer, Integer>();
+	int last = 0;
+	for(int i = 1; i <= max_value; i++) {
+	    if(mappings.containsKey(i)) {
+		if(i - last == 1)
+		    _1_jolt_diffs++;
+		else if (i - last == 3)
+		    _3_jolt_diffs++;
 
-	final int maxdiff = 3; //the maximum jump size allowed
-	int c_joltage = 0;
-	
-	for(int i = 0; i < inputs.size(); i++) {
-	    int new_jolt = inputs.get(i);
-	    int diff = new_jolt - c_joltage;
+		last = i;
 
-	    if(jsize.containsKey(diff))
-		jsize.put(diff, jsize.get(diff) + 1);
-	    else {
-		if(diff > maxdiff) {
-		    DEBUGF("NO MATCH: %d %d%n", new_jolt, c_joltage);
+		//THIS IS FOR PART TWO: DETERMINE SUM OF PREVIOUS MAPPINGS
+		BigInteger ct_score = BigInteger.ZERO;
+		for(int j = -3; j < 0; j++) {
+		    if(mappings.containsKey(i+j))
+			ct_score = ct_score.add(mappings.get(i+j));
 		}
-		jsize.put(diff, 1);		
+
+		mappings.put(i, ct_score);
 	    }
-	    c_joltage = new_jolt;
 	}
 
-	var p1 = BigInteger.valueOf(jsize.get(1)).multiply(BigInteger.valueOf(jsize.get(3) + 1));
 	DEBUGF("PART ONE: ");
-	println(p1);
-
-	ArrayList<BigInteger> valid = new ArrayList<BigInteger>();
-	for(int i = 0; i < inputs.size(); i++) {
-	    //first, the empty adapter is valid
-	    long input = inputs.get(i);
-	    BigInteger tally = BigInteger.ZERO;
-	    //if(i == 0)
-	    //	valid.add(1);
-	    for(int j = i-1; j >= 0; j--) {
-		long pre = inputs.get(j);
-		if(input - pre <= maxdiff) {
-		    //this is valid
-		    tally = tally.add(valid.get(j));
-		}
-		else
-		    break;
-	    }
-
-	    if(input <= maxdiff)
-		tally = tally.add(BigInteger.ONE);
-	    
-	    valid.add(tally);
-	}
-	    
-	c_joltage += 3;
-
+	println(_1_jolt_diffs * (1 + _3_jolt_diffs));
 	DEBUGF("PART TWO: ");
-	println(valid.get(valid.size()-1));
-	
+	println(mappings.get(max_value));
 	
 	t.total("Finished processing of file. ");
+    }
+
+    private int max(ArrayList<Integer> inputs) {
+	int max = inputs.get(0);
+	for(int i = 1; i < inputs.size(); i++)
+	    max = Math.max(inputs.get(i), max);
+	return max;
     }
 
     //do any argument processing here
