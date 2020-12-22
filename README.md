@@ -36,16 +36,19 @@ The workflow tool was original designed to cull all empty lines in input. To wor
 For example, the line ```04 empty``` means that when running problem 04, all empty lines are replaced with the word empty. This is very hacky, but it works well enough for now. I'll probably fix my tool (or replace it entirely) at some point to do away with this requirement.
 
 ## Problem Ratings
-| Problem | Complexity (Part One) | Complexity (Part Two) |
-| ------- |:---------------------:|:---------------------:|
-| Day 01  | O(N)                  | O(N<sup>2</sup>)      |
-| Day 02  | O(NK), K=average_password_size | O(N) | 
-| Day 03  |
-| Day 04  |
-| Day 05  |
-| Day 06  |
-| Day 07  |
-| Day 08  |
+Here are my ratings for each problem, and what the time complexity of my solutions happens to be.
+In almost every case, N is equal to the line count. Otherwise, N will be noted.
+
+| Problem | Complexity (Part One) | Complexity (Part Two) | Comments |
+| ------- |:---------------------:|:---------------------:|:-------- |
+| Day 01  | O(*N*)                  | O(*N<sup>2</sup>*)      |
+| Day 02  | O(*NK*), K=average_password_size | O(*N*) | 
+| Day 03  | O(*N*) | O(*NK*), K=slope_count |
+| Day 04  | O(N) | O(N) |
+| Day 05  | O(N) | O(N) | 
+| Day 06  | O(SE)\*| O(SE)\* | S = average number of elements to put into set, E = input count|
+| Day 07  | O(N K) | amortized O(N K) | k = average number of children or ancestors per element. Amortized through memoization. |
+| Day 08  | O(N) | O(N) |
 | Day 09  | O(*N W*), *W = window_size*| O(*N log(K)*), *K = max_sequence_size* |
 | Day 10  |
 | Day 11  |
