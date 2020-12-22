@@ -34,6 +34,33 @@ Open a soltuon to edit using the ```./workflow.sh``` command, like so:
 The workflow tool was original designed to cull all empty lines in input. To work around this, the run.sh pipeline will perform replacements on any input file mentioned in the replace.txt file. 
 
 For example, the line ```04 empty``` means that when running problem 04, all empty lines are replaced with the word empty. This is very hacky, but it works well enough for now. I'll probably fix my tool (or replace it entirely) at some point to do away with this requirement.
+## Lore
+Here's a brief summary of the 2020 advent of code deep lore.
+
+| Problem | Plot |
+| :-----: | :--- |
+| Day 01  | You're tired of saving Christmas. Time to go on a vacation to a tropical resort. Before we leave, the elves need us to fix an *expense report*
+| Day 02  | Our flight departs in a few days. We need to *toboggan* to the coast. Before we can buy the toboggan, we find out the rental store has faulty computers. We need to look at a database of passwords and identify valid ones.
+| Day 03  | We have a toboggan now, and we need to get to the coast. First, we need to determine how to get down the slope while hitting the smallest number of trees.
+| Day 04  | We've made it to the airport, only to find out we have the wrong credentials. Even worse, the automatic scanners seem to be malfunctioning. We hack the passport scanners to not only "fix the bugs", but [falsify our credentials](https://netrunnerdb.com/en/card/21064) and get in. We also let a bunch of people with invalid passports through by mistake. Whoops!
+| Day 05 | Oops, it seems we *"dropped"* our boarding pass. We skim the boarding pass of every other passenger, then use that to forge a new boarding pass for ourself.
+| Day 06 | We have to fill out customs declaration forms. We also have to fill out customs declaration forms for the other passengers, for some reason. Once we're done, we see that we actually filled all the instructions out wrong for the other passengers. Oopsie!
+| Day 07 | We landed at the regional airport. Unfortunately, our flight is delayed due to obtuse luggage processing rules. It turns out that in order to take our shiny gold bag onboard, we need to stuff it with approximately 35,000 other bags.
+| Day 08 | We've departed and we're in flight. Now a kid wants us to debug his nintendo.
+| Day 09 | Now that the kid has his nintendo fixed, we get bored and decide to hack a random data port on the plane. Fortunately, it uses an old, outdated, easily breakable encryption routine.
+| Day 10 | Now that we've hacked the plane, we steal it's weather forecasts. There's going to be a storm. Additionally, our laptop just ran out of battery. We happen to have about 300 different adapters, and we need to use them all if we want to download that weather data.
+| Day 11 | The plane touched down with plenty of time to spare. Now we need to find a seat on the ferry. To get the best seat, we model the loading of all the passengers.
+| Day 12 | The storm, which we stole data about and then ignored, has hit the ferry. The navigation computer seems to be malfunctioning. The captain needs us to to interpret the route to safety.
+| Day 13 | The ferry is wrecked, but it will make it to a nearby port. There is no way to get to the vacation island by boat from here. But what we can do is catch a bus to the airport! We crunch numbers to discover when the earliest bus we can catch is, and also we enter a competition held by the bus company where they ask us about some obscure oriental math theorem.
+| Day 14 | The docking computer for the fairy isn't compatible with the port computer. We need to emulate a legal ship using software and pretend to be authorized to dock.
+| Day 15 | We've made it to port, and caught the shuttle to the airport. The flight isn't direct, but there's nothing we can do.  While we wait, we check in with work and they make us play a game of memory.
+| Day 16 | The flight has touched down, and we're on the way to the next one. We need to catch a high-speed train, but we "can't read" our ticket. We hack the security cameras to steal the tickets of every other passenger, and using the values given, reverse engineer our own ticket (so we can find out the boarding time, of course).
+| Day 17 | On our next connecting flight, the *MIB* calls and wants us to work remotely. We need to debug thier conway-cube power source, by confirming that their states match the expected states.
+| Day 18 | Still in flight, the kid next to us requires us to do their math homework.
+| Day 19 | Work calls again, and they want us to debug their spy satellites. We need to validate signals using a finite state machine.
+| Day 20 | Our flight lands, and our train trip begins. We're still working remotely for the *MIB*. Now they need us to stitch together a bunch of satellite images so we can count sea monsters in the ocean. Eric needs you to buy the shirt.
+| Day 21 | We reach the end of the line. Now we need to build a raft and "legally enter" the vacation island the hard way. To stock supplies, we need to figure out which foods we are allergic to.
+| Day 22 | The raft has left, but floating at sea is boring. Fortunately, we find a crab to play games against. The crab beats u s, so we get upset and concoct a set of rules where we can't possible lose.
 
 ## Problem Ratings
 Here are my ratings for each problem, and what the time complexity of my solutions happens to be.
