@@ -39,7 +39,7 @@ For example, the line ```04 empty``` means that when running problem 04, all emp
 | Problem | Complexity (Part One) | Complexity (Part Two) |
 | ------- |:---------------------:|:---------------------:|
 | Day 01  | O(N)                  | O(N<sup>2</sup>)      |
-| Day 02  |
+| Day 02  | O(NK), K=average_password_size | O(N) | 
 | Day 03  |
 | Day 04  |
 | Day 05  |
