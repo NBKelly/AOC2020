@@ -78,7 +78,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 07  | *O(NK)* | amortized *O(NK)* | K = average number of children or ancestors per element. Amortized through memoization. |
 | Day 08  | *O(N)* | *O(N)* |
 | Day 09  | *O(N W)*| *O(N log(K))* | W = window_size, K = max_sequence_size* |
-| Day 10  | *O(3N)* | *O(3N)* | Abuses properties of data. O(N log N) for more complicated cases. If (Maxjumps-1) < log(N), then using a hashmap gives superior (worst case) speed. |
+| Day 10  | *O(N + M)* | *O(M + NJ)* | Abuses properties of data. M = maximum size in list. J = maximum joltage jump. 
 | Day 11  |
 | Day 12  |
 | Day 13  |
@@ -314,7 +314,7 @@ We know a single way to connect the adapters using every single adapter, but how
 * For each key in the collection, if that key is in range of 0, set the value to 1. Then, if (key-1, key-2, key-3) exist, add thier values to the value for this key.
 The result is the value for the final key in the collection, which is the number of valid ways to link 0 joltages to the laptop using our collection of adapters.
 
-At most, each key takes three comparisons, so this can be done in *O(N)*. The data had to be sorted first, however, so that makes this *O(N log N)*. A similar trick to the hashmap one in part 1 can be done here, however, to turn this entire problem into *O(3N)* in time and space complexity.
+At most, each key takes three comparisons, so this can be done in *O(N)*.  The data had to be sorted first, however, so that makes this *O(N log N)*. A similar trick to the hashmap one in part 1 can be done here, We need to track through all indices from 1 to M, however, so this takes it to *O(3N + M)*, where M is the maximum value.
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
