@@ -59,7 +59,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 16  |
 | Day 17  |
 | Day 01  |
-| Day 18  |
+| Day 18  | O(NT) | O(NT) | T = average token count per line 
 | Day 19  |
 | Day 20  |
 | Day 21  |
