@@ -16,6 +16,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     7. [Day 07](#day-07-handy-haversacks)
     8. [Day 08](#day-08-handheld-halting)
     9. [Day 09](#day-09-encoding-error)
+    10. [Day 10](#day-10-adapter-array)
     18. [Day 18](#day-18-operation-order)
 
 ## Project Structure
@@ -34,6 +35,33 @@ Open a soltuon to edit using the ```./workflow.sh``` command, like so:
 The workflow tool was original designed to cull all empty lines in input. To work around this, the run.sh pipeline will perform replacements on any input file mentioned in the replace.txt file. 
 
 For example, the line ```04 empty``` means that when running problem 04, all empty lines are replaced with the word empty. This is very hacky, but it works well enough for now. I'll probably fix my tool (or replace it entirely) at some point to do away with this requirement.
+## Lore
+Here's a brief summary of the 2020 advent of code deep lore.
+
+| Problem | Plot |
+| :-----: | :--- |
+| Day 01  | You're tired of saving Christmas. Time to go on a vacation to a tropical resort. Before we leave, the elves need us to fix an *expense report*
+| Day 02  | Our flight departs in a few days. We need to *toboggan* to the coast. Before we can buy the toboggan, we find out the rental store has faulty computers. We need to look at a database of passwords and identify valid ones.
+| Day 03  | We have a toboggan now, and we need to get to the coast. First, we need to determine how to get down the slope while hitting the smallest number of trees.
+| Day 04  | We've made it to the airport, only to find out we have the wrong credentials. Even worse, the automatic scanners seem to be malfunctioning. We hack the passport scanners to not only "fix the bugs", but [falsify our credentials](https://netrunnerdb.com/en/card/21064) and get in. We also let a bunch of people with invalid passports through by mistake. Whoops!
+| Day 05 | Oops, it seems we *"dropped"* our boarding pass. We skim the boarding pass of every other passenger, then use that to forge a new boarding pass for ourself.
+| Day 06 | We have to fill out customs declaration forms. We also have to fill out customs declaration forms for the other passengers, for some reason. Once we're done, we see that we actually filled all the instructions out wrong for the other passengers. Oopsie!
+| Day 07 | We landed at the regional airport. Unfortunately, our flight is delayed due to obtuse luggage processing rules. It turns out that in order to take our shiny gold bag onboard, we need to stuff it with approximately 35,000 other bags.
+| Day 08 | We've departed and we're in flight. Now a kid wants us to debug his nintendo.
+| Day 09 | Now that the kid has his nintendo fixed, we get bored and decide to hack a random data port on the plane. Fortunately, it uses an old, outdated, easily breakable encryption routine.
+| Day 10 | Now that we've hacked the plane, we steal it's weather forecasts. There's going to be a storm. Additionally, our laptop just ran out of battery. We happen to have about 300 different adapters, and we need to use them all if we want to download that weather data.
+| Day 11 | The plane touched down with plenty of time to spare. Now we need to find a seat on the ferry. To get the best seat, we model the loading of all the passengers.
+| Day 12 | The storm, which we stole data about and then ignored, has hit the ferry. The navigation computer seems to be malfunctioning. The captain needs us to to interpret the route to safety.
+| Day 13 | The ferry is wrecked, but it will make it to a nearby port. There is no way to get to the vacation island by boat from here. But what we can do is catch a bus to the airport! We crunch numbers to discover when the earliest bus we can catch is, and also we enter a competition held by the bus company where they ask us about some obscure oriental math theorem.
+| Day 14 | The docking computer for the fairy isn't compatible with the port computer. We need to emulate a legal ship using software and pretend to be authorized to dock.
+| Day 15 | We've made it to port, and caught the shuttle to the airport. The flight isn't direct, but there's nothing we can do.  While we wait, we check in with work and they make us play a game of memory.
+| Day 16 | The flight has touched down, and we're on the way to the next one. We need to catch a high-speed train, but we "can't read" our ticket. We hack the security cameras to steal the tickets of every other passenger, and using the values given, reverse engineer our own ticket (so we can find out the boarding time, of course).
+| Day 17 | On our next connecting flight, the *MIB* calls and wants us to work remotely. We need to debug thier conway-cube power source, by confirming that their states match the expected states.
+| Day 18 | Still in flight, the kid next to us requires us to do their math homework.
+| Day 19 | Work calls again, and they want us to debug their spy satellites. We need to validate signals using a finite state machine.
+| Day 20 | Our flight lands, and our train trip begins. We're still working remotely for the *MIB*. Now they need us to stitch together a bunch of satellite images so we can count sea monsters in the ocean. Eric needs you to buy the shirt.
+| Day 21 | We reach the end of the line. Now we need to build a raft and "legally enter" the vacation island the hard way. To stock supplies, we need to figure out which foods we are allergic to.
+| Day 22 | The raft has left, but floating at sea is boring. Fortunately, we find a crab to play games against. The crab beats u s, so we get upset and concoct a set of rules where we can't possible lose.
 
 ## Problem Ratings
 Here are my ratings for each problem, and what the time complexity of my solutions happens to be.
@@ -50,7 +78,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 07  | *O(NK)* | amortized *O(NK)* | K = average number of children or ancestors per element. Amortized through memoization. |
 | Day 08  | *O(N)* | *O(N)* |
 | Day 09  | *O(N W)*| *O(N log(K))* | W = window_size, K = max_sequence_size* |
-| Day 10  |
+| Day 10  | *O(3N)* | *O(3N)* | Abuses properties of data. O(N log N) for more complicated cases. If (Maxjumps-1) < log(N), then using a hashmap gives superior (worst case) speed. |
 | Day 11  |
 | Day 12  |
 | Day 13  |
@@ -58,8 +86,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 15  |
 | Day 16  |
 | Day 17  |
-| Day 01  |
-| Day 18  |
+| Day 18  | O(NT) | O(NT) | T = average token count per line 
 | Day 19  |
 | Day 20  |
 | Day 21  |
@@ -269,6 +296,25 @@ while(true):
 ```
 
 The weakness can then be found with ```min(sequence) * max(sequence)```.
+
+### Day 10: Adapter Array
+Our laptop is out of power and need to be charged. We have a bag of adapters, each with unique *joltages*, and our device has a *joltage* of max(input) + 3. Each adapter can take an input of *j-1*, *j-2*, or *j-3* jolts. The charging outlet has a charge of 0 *jolts*.
+
+#### Part One
+If we use every adapter at once, what is the distribution of joltages we achieve? The answer is given as ```sum(1-jolt-jumps)``` \* ```sum(3-jolt-jumps)```.
+
+To achieve this result, there are two general methods:
+1) We know the size of the collection, and we can determine in linear time what the max and min values are. A hashmap can be made of adapter joltages, which will have worst case space of *3N*. Then, keys can be checked iteratively. Where a match is found, compare that to the last match to determine the joltage jump. This takes, in the worst case, 3N time and space.
+2) The collection can be sorted, which takes *O(N log N)* time. Then, it can be walked iterated through.
+Don't forget to add the +1 for jumping from the adapter to your device.
+
+#### Part Two
+We know a single way to connect the adapters using every single adapter, but how many ways can we connect them using any number of adapters that bridges 0 to max_value? This can actually be done in "linear" time too, because of the properties of our data. The entries are all unique, and each value is only "linked" with values 3 joltages above or below it. With the sorted list, perform the following:
+* Create a map <Integer, Integer> using our original collection as the key, and initializing each value to 0.
+* For each key in the collection, if that key is in range of 0, set the value to 1. Then, if (key-1, key-2, key-3) exist, add thier values to the value for this key.
+The result is the value for the final key in the collection, which is the number of valid ways to link 0 joltages to the laptop using our collection of adapters.
+
+At most, each key takes three comparisons, so this can be done in *O(N)*. The data had to be sorted first, however, so that makes this *O(N log N)*. A similar trick to the hashmap one in part 1 can be done here, however, to turn this entire problem into *O(3N)* in time and space complexity.
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
