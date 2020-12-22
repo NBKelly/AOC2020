@@ -46,7 +46,7 @@ For example, the line ```04 empty``` means that when running problem 04, all emp
 | Day 06  |
 | Day 07  |
 | Day 08  |
-| Day 09  | O(N * W), W = window_size| O(N * K), K = max_sequence_size |
+| Day 09  | O(*N W*), *W = window_size*| O(*N log(K)*), *K = max_sequence_size* |
 | Day 10  |
 | Day 11  |
 | Day 12  |
