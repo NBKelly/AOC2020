@@ -63,33 +63,20 @@ public class Advent11 extends ConceptHelper {
     //   Single pairs, or lists of numbers are supported <>, []
     
     //this is basically your main method
-    final int FLOOR = 0;
-    final int EMPTY = 1;
-    final int OCCUPIED = 2;
-    final boolean generategif = true;
+
+    private final char EMPTY = 'L';
+    private final char FLOOR = '.';
+    private final char TAKEN = '#';
+    private final char CONVERT = EMPTY ^ TAKEN;
     
-    private int[][] translate(ArrayList<String> input) {
-	int[][] state = new int[input.size()][];
-	for(int i = 0; i < input.size(); i++) {
-	    String s = input.get(i);
-	    state[i] = new int[s.length()];
-	    for(int j = 0; j < s.length(); j++) {
-		int res = 0;
-		switch(s.charAt(j)) {
-		case 'L':
-		    state[i][j] = EMPTY;
-		    break;
-		case '.':
-		    state[i][j] = FLOOR;
-		    break;
-		case '#':
-		    state[i][j] = OCCUPIED;
-		    break;
-		}
-	    }
+    private char[][] translate(ArrayList<String> input) {
+	char[][] res = new char[input.size()][];
+	int lc = 0;
+	for(String s : input) {
+	    res[lc++] = s.toCharArray();
 	}
 
-	return state;
+	return res;
     }
     
     public void solveProblem() throws Exception {
@@ -99,88 +86,218 @@ public class Advent11 extends ConceptHelper {
         while(hasNextLine())
 	    input.add(nextLine());
 	
-	int[][] state = translate(input);
+	char[][] state = translate(input);
+	int height = state.length;
+	int width = state[0].length;
+	var p1_state = dup(state, height, width);
+
+	var precomp_change = computeDynamic(state, height, width);
 	
-	//get the height and width of the state
-	int height = input.size();
-	int width = input.get(0).length();
+	t.split("Starting part 1");
+	println(solve_simple_fast(p1_state, height, width, precomp_change));
 
-	t.split("Start 1");
-	println(solve_simple_fast(state, height, width));
-	t.split("Start 2");
-	println(solve_simple(state, height, width));
-	t.split("Start 3");
-	println(solve_complex(state, height, width));
-
+	t.split("Starting part 2");
+	println(solve_complex_fast(state, height, width, precomp_change));
+	
 	t.total("Finished processing of file. ");
     }
 
-    public int[][] dup(int[][] target, int height, int width) {
-	int[][] res = new int[height][];
+    private ConcurrentLinkedQueue<Pair> computeDynamic(char[][] state, int height, int width) {
+	final ConcurrentLinkedQueue<Pair> _changed = new ConcurrentLinkedQueue<Pair>();
+
+	IntStream.range(0, state.length).parallel().forEach(y -> {
+		char[] line = state[y];
+		for(int x = 0; x < line.length; x++) {
+		    if(is_seat(line[x]))
+			_changed.add(new Pair(x, y));
+		}
+	    });
+
+	return _changed;
+    }
+    
+    public int solve_simple_fast(char[][] state, int height, int width, ConcurrentLinkedQueue<Pair> changed) {
+	
+	while(changed.size() > 0) {	    
+	    ConcurrentLinkedQueue<Pair> changed2 = new ConcurrentLinkedQueue<>();
+
+	    changed.parallelStream().forEach(pair -> {
+		    switch(state[pair.Y][pair.X]) {
+			//if a seat is empty (L) and there are no occupied seats adjacent to it,
+			//the seat becomes occupied
+		    case EMPTY:
+			if(occupied_adjacent(state, height, width, pair.X, pair.Y, 1) == 0)
+			    changed2.add(pair);
+			break;
+			//if a seat is occupied and there are four or more occupied adjacent seats,
+			//then we consider that seat is abandoned
+		    case TAKEN:
+			if(occupied_adjacent(state, height, width, pair.X, pair.Y, 4) >= 4)
+			    changed2.add(pair);
+			break;
+		    }		    
+		});
+	    
+	    changed = changed2;
+
+	    //turns out clear/addall has a 40% performance hit haha
+	    //changed.clear();
+	    //changed.addAll(changed2);
+
+	    changed.parallelStream().forEach(pair -> {
+		    state[pair.Y][pair.X] ^= CONVERT;
+		});
+	}
+
+	return count_occupied(state, height, width);
+    }
+
+    //COUNTS THE NUMBER OF OCCUPIED SEATS DIRECTLY ADJACENT TO A SEAT
+    private int occupied_adjacent(char[][] state, int height, int width, int x, int y, int max) {
+	int ct = 0;
+	for(int dx = -1; dx < 2 && ct < max; dx++)
+	    for(int dy = -1; dy < 2 && ct < max; dy++) {
+		//check not identity
+		if(dx != 0 || dy != 0) {
+		    //check inbounds
+		    if(dx + x >= 0 && dx + x < width
+		       && dy + y >= 0 && dy + y < height) {
+			if(state[y+dy][x+dx] == TAKEN)
+			    ct++;
+		    }		       
+		}
+	    }
+
+	return ct;
+    }
+    
+    public int solve_complex_fast(char[][] state, int height, int width, ConcurrentLinkedQueue<Pair> changed) {
+	//precompute all the neighbors
+	Pair[][][] neighbors = new Pair[height][width][];
+	changed.parallelStream().forEach(pair -> {
+		neighbors[pair.Y][pair.X] = findNeighbors(state, height, width, pair.X, pair.Y);	    
+	    });
+
+	while(changed.size() > 0) {
+	    ConcurrentLinkedQueue<Pair> changed2 = new ConcurrentLinkedQueue<Pair>();
+	    
+	    changed.parallelStream().forEach(pair -> {
+		    switch(state[pair.Y][pair.X]) {
+		    case EMPTY:
+			//if we can see no occupied seats, fill
+			if(occupied_adjacent(state, neighbors[pair.Y][pair.X], 1) == 0)
+			    changed2.add(pair);
+			break;
+		    case TAKEN:
+			//if we can see 5 or more occupied seats, vacate
+			if(occupied_adjacent(state, neighbors[pair.Y][pair.X], 5) == 5)
+			    changed2.add(pair);
+		    }
+		});
+
+	    changed = changed2;
+
+	    //convert all the changes
+	    changed.parallelStream().forEach(pair -> {
+		    state[pair.Y][pair.X] ^= CONVERT;
+		});
+	}
+	
+	return count_occupied(state, height, width);
+	
+    }
+
+    //CHECKS IF A GIVEN TILE IS A STEA
+    private boolean is_seat(char c) {
+	return (c != FLOOR);
+    }
+
+    private int occupied_adjacent(char[][] state, Pair[] targets, int max) {
+	int rem = max;
+	int ct = 0;
+
+	for(int i = 0; i < targets.length && rem <= targets.length - i && ct < max; i++) {
+	    var target = targets[i];
+	    if(state[target.Y][target.X] == TAKEN) {
+		ct++;
+		rem--;
+	    }		
+	}
+
+	return ct;
+    }
+    
+    //COUNTS THE NUMBER OF OCCUPIED SEATS IN A MAP
+    private int count_occupied(char[][] state, int height, int width) {
+	int ct = 0;
+
+	for(int y = 0; y < height; y++)
+	    for(int x = 0; x < width; x++) {
+		if(state[y][x] == TAKEN)
+		    ct++;
+	    }
+		    
+	return ct;
+    }
+
+    //finds all neighbors in octal trajectories
+    private Pair[] findNeighbors(char[][] state, int height, int width, int x, int y) {
+	int ct = 0;
+	Pair[] neighbors = new Pair[8];
+
+	for(int dx = -1; dx < 2; dx++)
+	    for(int dy = -1; dy < 2; dy++) {
+		if(dx != 0 || dy != 0) {
+		    var pair = findNeighbor(state, height, width, x, y, dx, dy);
+		    if(pair != null)
+			neighbors[ct++] = pair;
+		}
+	    }
+
+	return IntStream.range(0, ct).mapToObj(i -> neighbors[i]).toArray(Pair[]::new);
+    }
+
+    //finds the nearest neighbor along a given trajectory
+    private Pair findNeighbor(char[][] state, int height, int width, int x, int y, int dx, int dy) {
+
+	int dist = 1;
+	int _x = 0;
+	int _y = 0;
+	while((_x = dist*dx + x) >= 0 && _x < width &&
+	      (_y = dist*dy + y) >= 0 && _y < height) {
+	    if(is_seat(state[_y][_x]))
+		return new Pair(_x, _y);
+	    dist++;
+	}
+
+	return null;
+    }
+    	
+    public char[][] dup(char[][] target, int height, int width) {
+	char[][] res = new char[height][];
 	    ;
 	for(int y = 0; y < height; y++) {
-	    res[y] = new int[width];
+	    res[y] = new char[width];
 	    for(int x = 0; x < width; x++)
 		res[y][x] = target[y][x];
 	}
 	return res;
     }
-    //state is double buffered, we don't need to worry about cloning it
-    private int solve_simple_fast(int[][] _state, int height, int width) throws Exception {	
-	int iteration = 0;
-
-	final int[][] state = dup(_state, height, width);
-	
-	//only seats can change
-	ConcurrentLinkedQueue<Pair> changed = new ConcurrentLinkedQueue<>();
-	for(int y = 0; y < height; y++)
-	    for(int x = 0; x < width; x++)
-		if(isSeat(y, x, state, height, width))
-		    changed.add(new Pair(x, y));
-
-	while(changed.size() > 0) {
-	    //if(DEBUG) print_matrix(state, height, width);
-
-	    ConcurrentLinkedQueue<Pair> changed2 = new ConcurrentLinkedQueue<>();	    
-
-	    changed.parallelStream().
-		forEach(pair -> {
-			int y = pair.Y;
-			int x = pair.X;
-			if(isEmpty(y, x, state, height, width)) {
-			    if(occupied_surrounding(y, x, state, height, width) == 0) {
-				changed2.add(new Pair(x, y));
-			    }
-			}
-			else if (isOccupied(y, x, state, height, width)) {
-			    if(occupied_surrounding(y, x, state, height, width) >= 4) {
-				changed2.add(new Pair(x, y));
-			    }
-			}			
-		    });
-
-	    changed = changed2;
-	    
-	    changed.parallelStream().forEach(pair -> {
-		    int y = pair.Y;
-		    int x = pair.X;
-		    state[y][x] ^= 3;
-		});
-
-	    
-	    //DEBUG(iteration++);
-	    
-	}
-
-	return ct_token(state, height, width, OCCUPIED);
-    }
-
+    
     private class Pair {
-	int X;
-	int Y;
+	final int X;
+	final int Y;
+	final int hashcode = -1;
+	
+	@Override public int hashCode() {
+	    //compute only once to optimize
+	    return hashcode; //return 7 * ((X*Y) + X + Y);
+	}
+	
 	public Pair(int X, int Y) {
 	    this.X = X;
 	    this.Y = Y;
+	    //this.hashcode = 7 * (X*Y + X + Y);
 	}
 
 	public boolean equals(Pair p) {
@@ -192,179 +309,6 @@ public class Advent11 extends ConceptHelper {
 	}
     }
     
-    //state is double buffered, we don't need to worry about cloning it
-    private int solve_simple(int[][] _state, int height, int width) throws Exception {	
-	int iteration = 0;
-
-	final Res res = new Res();
-
-	res.hasChanged = true;
-	while(res.hasChanged) {
-	    //if(DEBUG) print_matrix(_state, height, width);
-	    res.hasChanged = false;
-	    final int[][] state = _state;
-	    final int[][] newState = new int[height][];
-	    IntStream lines = IntStream.range(0, height);
-	    lines.parallel().forEach(y -> {
-		newState[y] = new int[width];
-		for(int x = 0; x < width; x++) {
-		    newState[y][x] = state[y][x];
-		    if(isEmpty(y, x, state, height, width)) {
-			if(occupied_surrounding(y, x, state, height, width) == 0) {
-			    newState[y][x] = OCCUPIED;
-			    res.hasChanged = true;
-			}
-		    }
-		    else if (isOccupied(y, x, state, height, width)) {
-			if(occupied_surrounding(y, x, state, height, width) >= 4) {
-			    newState[y][x] = EMPTY;
-			    res.hasChanged = true;
-			}			
-		    }		    
-		}
-		});
-	    
-	    _state = newState;
-	    //DEBUG(iteration++);
-
-	}
-
-	return ct_token(_state, height, width, OCCUPIED);
-    }
-
-    //state is double buffered, we don't need to worry about cloning it
-    private int solve_complex(int[][] _state, int height, int width) {	
-	int iteration = 0;
-	
-	final Res res = new Res();
-	res.hasChanged = true;
-	while(res.hasChanged) {
-	    //if(DEBUG) print_matrix(_state, height, width);
-	    res.hasChanged = false;
-	    final int[][] state = _state;
-	    final int[][] newState = new int[height][];
-	    IntStream lines = IntStream.range(0, height);
-	    lines.parallel().forEach(y -> {
-		newState[y] = new int[width];
-		for(int x = 0; x < width; x++) {
-		    newState[y][x] = state[y][x];
-		    if(isEmpty(y, x, state, height, width)) {
-			if(occupied_surrounding_line(y, x, state, height, width) == 0) {
-			    newState[y][x] = OCCUPIED;
-			    res.hasChanged = true;
-			}
-		    }
-		    else if (isOccupied(y, x, state, height, width)) {
-			if(occupied_surrounding_line(y, x, state, height, width) >= 5) {
-			    newState[y][x] = EMPTY;
-			    res.hasChanged = true;
-			}			
-		    }		    
-		}
-		});
-	    
-	    _state = newState;
-	    //DEBUG(iteration++);
-
-	}
-
-	return ct_token(_state, height, width, OCCUPIED);
-    }
-
-    private class Res {	
-	public boolean hasChanged = false;
-    }
-    
-    private int print_matrix(int[][] state, int height, int width) {
-	if(DEBUG) {
-	    for(int y = 0; y < height; y++) {
-		for(int x = 0; x < width; x++) {
-		    switch(state[y][x]) {
-		    case 2: DEBUGF("%c",'#'); break;
-		    case 1: DEBUGF("%c",'L'); break;
-		    case 0: DEBUGF("%c",'.'); break;
-		    }
-		}
-		DEBUG();
-	    }
-	}
-
-	return 0;
-    }
-    
-    int ct_token(int[][] state, int height, int width, int token) {
-	int ct = 0;
-	for(int y = 0; y < height; y++)
-	    for(int x = 0; x< width; x++) {
-		if(state[y][x] == token)
-		    ct++;
-	    }
-
-	return ct;
-    }
-
-    boolean isEmpty(int y, int x, int[][] state, int height, int width) {
-	return isSeat(y, x, state, height, width) && state[y][x] == EMPTY;
-    }
-
-    boolean isOccupied(int y, int x, int[][] state, int height, int width) {
-	return isSeat(y, x, state, height, width) && state[y][x] == OCCUPIED;
-    }
-    
-    boolean isSeat(int y, int x, int[][] state, int height, int width) {
-	return (y >= 0 && y < height &&
-		x >= 0 && x < width &&
-		state[y][x] != FLOOR);
-    }
-
-    boolean firstSeatOccupied(int y, int x, int[][] state, int height, int width, int dy, int dx) {
-	int[] res = firstSeat(y, x, state, height, width, dy, dx);
-	return (isOccupied(res[0], res[1], state, height, width));
-    }
-    
-    int[] firstSeat(int y, int x, int[][] state, int height, int width, int dy, int dx) {
-	y += dy;
-	x += dx;
-	
-	while(y >= 0 && y < height && x >= 0 && x < width) {
-	    if((isSeat(y, x, state, height, width)))
-		return new int[]{y, x}; //location of seat
-	    y += dy;
-	    x += dx;
-	}
-
-	return new int[]{-1, -1};
-    }
-
-    int occupied_surrounding_line(int y, int x, int[][] state, int height, int width) {
-	int ct = 0;
-	for(int dy = -1; dy <= 1; dy++) {
-	    for(int dx = -1; dx <= 1; dx++) {
-		if(dx == 0 && dy == 0)
-		    continue;
-		if(firstSeatOccupied(y, x, state, height, width, dy, dx))
-		    ct++;
-	    }
-	}
-
-	return ct;
-    }
-    
-    int occupied_surrounding(int y, int x, int[][] state, int height, int width) {
-	int ct = 0;
-	for(int dy = -1; dy <= 1; dy++) {
-	    for(int dx = -1; dx <= 1; dx++) {
-		if(dx == 0 && dy == 0)
-		    continue;
-		if(isOccupied(y + dy, x + dx, state, height, width))
-		    ct++;
-	    }
-	}
-	
-	
-	return ct;
-    }
-        
     //do any argument processing here
     public boolean processArgs(String[] argv) {
 	for(int i = 0; i < argv.length; i++) {
