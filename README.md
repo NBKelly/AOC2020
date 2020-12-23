@@ -17,6 +17,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     8. [Day 08](#day-08-handheld-halting)
     9. [Day 09](#day-09-encoding-error)
     10. [Day 10](#day-10-adapter-array)
+    11. [Day 11](#day-11-seating-system)
     18. [Day 18](#day-18-operation-order)
 
 ## Project Structure
@@ -79,14 +80,14 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 08  | *O(N)* | *O(N)* |
 | Day 09  | *O(N W)*| *O(N log(K))* | W = window_size, K = max_sequence_size* |
 | Day 10  | *O(N + M)* | *O(M + NJ)* | Abuses properties of data. M = maximum size in list. J = maximum joltage jump. 
-| Day 11  |
+| Day 11  | *O(CI)*| *O(C(I+H+W))*  | Where C is the number of cells and I is the number of iterations needed to terminate. This really just depends on how many iterations the given input will generate. I don't know how to estimate that. Each iteration should be computable linear to the input size (and smaller than the last iteration), and a small amount of pre-processing needs to be done on part 2, which takes *O(C(H+W))*, where H and W are the Height and Width of the grid. The worst case for the absolute worst possible input couldn't be worse than *O(C<sup>2</sup>)* for either of these problems.
 | Day 12  |
 | Day 13  |
 | Day 14  |
 | Day 15  |
 | Day 16  |
 | Day 17  |
-| Day 18  | O(NT) | O(NT) | T = average token count per line 
+| Day 18  | O(N) | O(NT) | T = average token count per line 
 | Day 19  |
 | Day 20  |
 | Day 21  |
@@ -315,6 +316,32 @@ We know a single way to connect the adapters using every single adapter, but how
 The result is the value for the final key in the collection, which is the number of valid ways to link 0 joltages to the laptop using our collection of adapters.
 
 At most, each key takes three comparisons, so this can be done in *O(N)*.  The data had to be sorted first, however, so that makes this *O(N log N)*. A similar trick to the hashmap one in part 1 can be done here, We need to track through all indices from 1 to M, however, so this takes it to *O(3N + M)*, where M is the maximum value.
+
+### Day 11: Seating System
+We need to fully resolve a cellular automata based on a set of rules.
+
+#### Part One
+The rules are as follows:
+1) An empty seat becomes full if there are no adjacent empty seats
+2) An occupied seat becomes empty if there are four or more adjacent occupied seats
+
+It's simple enough to build a loop which computers this for every character in the matrix at every iteration, but first let's examine our automata:
+1) If a cell doesn't change over one iteration, it will never change again
+2) If every single cell which changed in one iteration then changes in the next iteration, then this automata can never resolve.
+3) Otherwise, this automata must resolve.
+4) If the automata is capable of resolving, then every second iteration must reduce the number of active tiles by at least one.
+
+The important thing to take note of is that the only cells we need to actively track are those that changed. Thus, we can greatly cut down on computation costs by only tracking these cells (and their direct neighbors).
+
+Additionally, it is possible to compute all of the cell changes in parallel, then apply them all at the same time. I'm uncertain how bad the overhead is here, it might not be worth it. I did it anyway.
+
+I believe the time complexity here is (at the worst case) O(C<sup>2<sup>), where C is the number of cells. I think that in the average case, however, it will be much much lower. I tended to get 70-90 iterations on inputs that were in the 10k cell count.
+
+#### Part Two
+The rules change a tiny bit here. First, we no longer consider neighbors. Only the first chair we can see from our position in each of the orthogonal directions. This can be precomputed for each chair, however, so the cost of that is negligible.
+Next, rule 2 has changed. We now need to see 5 chairs to vacate a chair.
+
+Everything from above applies, and this can be solved in the exact same way.
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
