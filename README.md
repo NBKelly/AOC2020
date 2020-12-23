@@ -17,6 +17,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     8. [Day 08](#day-08-handheld-halting)
     9. [Day 09](#day-09-encoding-error)
     10. [Day 10](#day-10-adapter-array)
+    11. [Day 11](#day-11-seating-system)
     18. [Day 18](#day-18-operation-order)
 
 ## Project Structure
