@@ -94,9 +94,11 @@ public class Advent11 extends ConceptHelper {
 	var precomp_change = computeDynamic(state, height, width);
 	
 	t.split("Starting part 1");
+	DEBUG("PART ONE: ");
 	println(solve_simple_fast(p1_state, height, width, precomp_change));
 
 	t.split("Starting part 2");
+	DEBUG("PART TWO: ");
 	println(solve_complex_fast(state, height, width, precomp_change));
 	
 	t.total("Finished processing of file. ");
@@ -117,10 +119,12 @@ public class Advent11 extends ConceptHelper {
     }
     
     public int solve_simple_fast(char[][] state, int height, int width, ConcurrentLinkedQueue<Pair> changed) {
-	
+
+	int csum = 0;
 	while(changed.size() > 0) {	    
 	    ConcurrentLinkedQueue<Pair> changed2 = new ConcurrentLinkedQueue<>();
-
+	    //println("change size: " +  changed.size());
+	    csum += changed.size();
 	    changed.parallelStream().forEach(pair -> {
 		    switch(state[pair.Y][pair.X]) {
 			//if a seat is empty (L) and there are no occupied seats adjacent to it,
@@ -148,7 +152,8 @@ public class Advent11 extends ConceptHelper {
 		    state[pair.Y][pair.X] ^= CONVERT;
 		});
 	}
-
+	//println("CSUM: " + csum);
+	
 	return count_occupied(state, height, width);
     }
 
@@ -178,9 +183,11 @@ public class Advent11 extends ConceptHelper {
 		neighbors[pair.Y][pair.X] = findNeighbors(state, height, width, pair.X, pair.Y);	    
 	    });
 
+	int csum = 0;
 	while(changed.size() > 0) {
+	    //println("change size: " +  changed.size());
 	    ConcurrentLinkedQueue<Pair> changed2 = new ConcurrentLinkedQueue<Pair>();
-	    
+	    csum += changed.size();
 	    changed.parallelStream().forEach(pair -> {
 		    switch(state[pair.Y][pair.X]) {
 		    case EMPTY:
@@ -202,7 +209,8 @@ public class Advent11 extends ConceptHelper {
 		    state[pair.Y][pair.X] ^= CONVERT;
 		});
 	}
-	
+
+	//println("CSUM: " + csum);
 	return count_occupied(state, height, width);
 	
     }
