@@ -19,7 +19,9 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     10. [Day 10](#day-10-adapter-array)
     11. [Day 11](#day-11-seating-system)
     12. [Day 12](#day-12-rain-risk)
+    15. [Day 15](#day-15-rambunctious-recitation)
     18. [Day 18](#day-18-operation-order)
+    23. [Day 23](#day-23-crab-cups)
 
 ## Project Structure
 All of the solutions are available in the ```com/nbkelly/advent``` folder. They can all be run using ```run.sh``` script like so:
@@ -86,7 +88,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 12  | *O(N)* | *O(N)* |
 | Day 13  |
 | Day 14  |
-| Day 15  |
+| Day 15  | *O(K)* | *O(K)* | K = number of cycles
 | Day 16  |
 | Day 17  |
 | Day 18  | O(N) | O(NT) | T = average token count per line 
