@@ -81,7 +81,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 09  | *O(N W)*| *O(N log(K))* | W = window_size, K = max_sequence_size* |
 | Day 10  | *O(N + M)* | *O(M + NJ)* | Abuses properties of data. M = maximum size in list. J = maximum joltage jump. 
 | Day 11  | *O(CI)*| *O(C(I+H+W))*  | Where C is the number of cells and I is the number of iterations needed to terminate. This really just depends on how many iterations the given input will generate. I don't know how to estimate that. Each iteration should be computable linear to the input size (and smaller than the last iteration), and a small amount of pre-processing needs to be done on part 2, which takes *O(C(H+W))*, where H and W are the Height and Width of the grid. The worst case for the absolute worst possible input couldn't be worse than *O(C<sup>2</sup>)* for either of these problems.
-| Day 12  |
+| Day 12  | *O(N)* | *O(N)* |
 | Day 13  |
 | Day 14  |
 | Day 15  |
@@ -342,6 +342,9 @@ The rules change a tiny bit here. First, we no longer consider neighbors. Only t
 Next, rule 2 has changed. We now need to see 5 chairs to vacate a chair.
 
 Everything from above applies, and this can be solved in the exact same way.
+
+### Day 12: Rain Risk
+Day 12 is quite simple. Part one requires that you apply a set of directions to a single point. There's not really too much to say about this problem. Part two is the same, except most of your instructions refer to moving a dynamic point around your point, then performing movements in the direction of the dynamic point. Both of these are purely O(N).
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
