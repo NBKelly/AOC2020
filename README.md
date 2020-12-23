@@ -63,7 +63,8 @@ Here's a brief summary of the 2020 advent of code deep lore.
 | Day 19 | Work calls again, and they want us to debug their spy satellites. We need to validate signals using a finite state machine.
 | Day 20 | Our flight lands, and our train trip begins. We're still working remotely for the *MIB*. Now they need us to stitch together a bunch of satellite images so we can count sea monsters in the ocean. Eric needs you to buy the shirt.
 | Day 21 | We reach the end of the line. Now we need to build a raft and "legally enter" the vacation island the hard way. To stock supplies, we need to figure out which foods we are allergic to.
-| Day 22 | The raft has left, but floating at sea is boring. Fortunately, we find a crab to play games against. The crab beats u s, so we get upset and concoct a set of rules where we can't possible lose.
+| Day 22 | The raft has left, but floating at sea is boring. Fortunately, we find a crab to play games against. The crab beats us, so we get upset, challenge him to a double-for-nothing, and concoct a set of rules where we can't possible lose.
+| Day 23 | The crab is upset we cheated. The crab tries challenging us to a game instead. We have to play a million-cup shell game to cheat him out of another two stars.
 
 ## Problem Ratings
 Here are my ratings for each problem, and what the time complexity of my solutions happens to be.
@@ -93,7 +94,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 20  |
 | Day 21  |
 | Day 22  |
-| Day 23  |
+| Day 23  | *O(N+K)* | *O(N+K)* | N = Token count, K = number of cycles. 
 | Day 24  |
 | Day 25  |
 ## Solutions
@@ -392,3 +393,22 @@ eval(stack, component):
       "+": return eval(stack, val)
       "*": return val * eval(stack, 0)
   ```
+
+
+### Day 23: Crab Cups
+The crab has now challenged us to a shell game. This can be done in linear time by using a linkedlist, where every node is also kept in a map by value. So each node can be accessed in O(1), and insertion/removal can also be done in O(1)
+
+#### Part One
+For each round:
+
+1) pick the first cup in the list
+2) set aside the next three cups
+3) Find the target cup with a value of first-1. If that doesn't exist, decrement that value until we find a cup.
+4) Insert the cups set aside in 2) after the cup selected in 3)
+5) Put the first cup at the end of the list (rotate the list counterclockwise once)
+
+Note that 1, 2 both occur right at the start of the list, so should be o(1) with a linked list.
+Then, if we can quickly lookup arbitrary nodes and insert directly after then, then every cycle should be O(n). To do this, we just need to combine our linkedlist with a map.
+
+#### Part Two
+The same thing but for a million numbers and ten million cycles. If you didn't optimise, you'll be waiting until Christmas.
