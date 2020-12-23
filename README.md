@@ -351,8 +351,41 @@ Everything from above applies, and this can be solved in the exact same way.
 Day 12 is quite simple. Part one requires that you apply a set of directions to a single point. There's not really too much to say about this problem. Part two is the same, except most of your instructions refer to moving a dynamic point around your point, then performing movements in the direction of the dynamic point. Both of these are purely O(N).
 
 ### Day 15: Rambunctious Recitation
-Van-Eck sequence.
-https://oeis.org/A181391
+This problem basically asks you to implement the [Van-Eck sequence](https://oeis.org/A181391).
+
+The properties of this sequence are as follows:
+1) First, an input sequence of numbers is given
+2) Then, every time a number would be generated, look at the previous number in the sequence
+3) If the previous number is unique (not in the map), next = 0
+4) Otherwise next = (current time) - (last time number spoken)
+
+A quick implementation basically goes like this:
+
+```
+<Integer, Integer> memory;
+for(i = 1; i <= input.length; i++):
+    memory.put(input[i-1], i)
+    
+//After a unique sequence, the next number is always 0 
+int next = 0
+
+for(int i = input.length+1; i < lim; i++) {
+    //it it's the first time the number appears, then next_next is zero
+    int next_next = 0;
+    
+    //if the number is seen, next_next is difference between i and last time spoken
+    if(memory.containsKey(next))
+        next_next = i - memory.get(next);
+        
+    memory.put(next, i);
+    next = next_next
+}
+
+return next;
+```
+
+It's trivial to see that this takes *O(K)* time, where K is the number to generate.
+
 https://i.4cdn.org/g/1608028485073.jpg
 
 ### Day 18: Operation Order
