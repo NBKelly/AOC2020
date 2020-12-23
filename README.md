@@ -386,7 +386,9 @@ return next;
 
 It's trivial to see that this takes *O(K)* time, where K is the number to generate.
 
-https://i.4cdn.org/g/1608028485073.jpg
+In terms of possible speedups, I think the answer is "we don't know." I definitely don't. I believe a summary of the properties of the sequence can be see here:
+
+![van-eck](https://raw.githubusercontent.com/NBKelly/AOC2020/master/van-eck.jpeg "We don't know")
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
