@@ -3,8 +3,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
 
 # Table of Contents
 1. [Project Structure](#Project-Structure)
-    1. [Adding a Solution](#Adding-a-solution)
-    2. [Replace.txt](#Replace.txt)
+2. [Lore](#lore)
 2. [Problem Ratings](#Problem-Ratings)
 3. [Solutions](#Solutions)
     1. [Day 01](#day-01-report-repair)
