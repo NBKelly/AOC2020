@@ -65,11 +65,9 @@ public class Advent23 extends ConceptHelper {
     public void solveProblem() throws Exception {
 	Timer t = new Timer().start();
 
-	var input = nextLine(); //readInput();
+	var input = nextLine();
 	//input = "389125467";
-	//println(input);
-
-
+	
 	int maxvalue = 1000000;
 	CircularLinkedMap p1_map = new CircularLinkedMap(9);
 	CircularLinkedMap p2_map = new CircularLinkedMap(maxvalue);
@@ -82,24 +80,13 @@ public class Advent23 extends ConceptHelper {
 	for(int i = 10; i <= maxvalue; i++)
 	    p2_map.add(i);
 	
-	//int it_count = 10;
-	
 	for(int i = 0; i < 100; i++)
 	    cycleCups(p1_map, 9);
 	
-	for(int i = 0; i < 10000000; i++) {
+	for(int i = 0; i < 10000000; i++)
 	    cycleCups(p2_map, maxvalue);
-
-	    /*if(i%it_count == 0 || i < 1000)
-		DEBUGF("IT %d%n", i);
-
-	    if(i >= 25*it_count)
-	    it_count *= 5;*/
-	}
 	
-	
-	DEBUGF("PART ONE: "); println(p1_map.partOne());
-	
+	DEBUGF("PART ONE: "); println(p1_map.partOne());	
 	DEBUGF("PART TWO: "); println(p2_map.partTwo());
 
 	t.total("Finished processing of file. ");
@@ -129,7 +116,7 @@ public class Advent23 extends ConceptHelper {
 	
 	private class Node {
 	    public Node(int value) { this.value = value; location[value] = this; }
-	    public Node next = null;
+	    public Node next = head;
 	    final public int value;	    
 	}
 
@@ -142,12 +129,11 @@ public class Advent23 extends ConceptHelper {
 	public void add(int i) { //add a new element to the map
 	    Node n = new Node(i);
 
-	    if(head == null) {		
+	    if(head == null)
 		head = tail = n;
-		tail.next = head;
-	    }
-
+	    
 	    tail = transpose(tail, n);
+	    tail.next = head;
 	}
 	
 	public int getFirst() { return head.value; }
