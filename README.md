@@ -18,7 +18,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     9. [Day 09](#day-09-encoding-error)
     10. [Day 10](#day-10-adapter-array)
     11. [Day 11](#day-11-seating-system)
-    12. [Day 12](#day-11-rain-risk)
+    12. [Day 12](#day-12-rain-risk)
     18. [Day 18](#day-18-operation-order)
 
 ## Project Structure
@@ -336,7 +336,7 @@ The important thing to take note of is that the only cells we need to actively t
 
 Additionally, it is possible to compute all of the cell changes in parallel, then apply them all at the same time. I'm uncertain how bad the overhead is here, it might not be worth it. I did it anyway.
 
-I believe the time complexity here is (at the worst case) O(C<sup>2<sup>), where C is the number of cells. I think that in the average case, however, it will be much much lower. I tended to get 70-90 iterations on inputs that were in the 10k cell count.
+I believe the time complexity here is (at the worst case) O(C<sup>2</sup>), where C is the number of cells. I think that in the average case, however, it will be much much lower. I tended to get 70-90 iterations on inputs that were in the 10k cell count.
 
 #### Part Two
 The rules change a tiny bit here. First, we no longer consider neighbors. Only the first chair we can see from our position in each of the orthogonal directions. This can be precomputed for each chair, however, so the cost of that is negligible.
