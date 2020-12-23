@@ -348,6 +348,11 @@ Everything from above applies, and this can be solved in the exact same way.
 ### Day 12: Rain Risk
 Day 12 is quite simple. Part one requires that you apply a set of directions to a single point. There's not really too much to say about this problem. Part two is the same, except most of your instructions refer to moving a dynamic point around your point, then performing movements in the direction of the dynamic point. Both of these are purely O(N).
 
+### Day 15: Rambunctious Recitation
+Van-Eck sequence.
+https://oeis.org/A181391
+https://i.4cdn.org/g/1608028485073.jpg
+
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
 
