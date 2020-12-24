@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * @author      NB Kelly <nbkelly @ protonmail.com>
- * @version     1.1
+ * @version     1.2
  * @since       1.0
  */
 public final class Util {
@@ -46,7 +46,48 @@ public final class Util {
 	else
 	    return val & ~bit;
     }
+    
+    /**
+     * Compares features and returns an integer value.
+     * @param params A sequence of parameters to compare, of the form [type(a), type(a)]*
+     * @return The first non-zero comparison in the series
+     * @since 1.2
+     */
+    @SuppressWarnings("unchecked")
+    public static final int compareTo(Comparable... params) {
+	//comparing nothing will always give back no
+	if(params.length == 0)
+	    return 0;
 
+	if(params.length %2 == 1)
+	    throw new IllegalArgumentException("Util.compareTo(params): [comparableTypeA, comparableTypeA]"
+					       + " (param count must be an even number (01))");
+
+	int res = 0;
+	for(int i = 0; i < params.length; i+= 2) {
+	    try {
+		//how do we deal with null values?
+		//if only the first item is null, we can try (-1 * (+1.compareTo(0)))
+		if(params[i] == null)
+		    res = -1 * params[i+1].compareTo(params[i]);
+		else
+		    res = params[i].compareTo(params[i+1]);
+		
+		if(res != 0)
+		    return res;
+	    } catch (Exception e) {
+		String c1 = (params[i] == null ? "NULL" : params[i].getClass().toString());
+		String c2 = (params[i+1] == null ? "NULL" : params[i+1].getClass().toString());
+		//if the comparison is invalid, we just need to let it be known
+		String exc = String.format("Failed comparison at index (%d/+1), due to an error comparing types"
+					   + " '%s' and '%s'. Was the input well formed? Given exception read as:"
+					   + " '%s'", i, c1, c2);
+		throw new IllegalArgumentException(exc);
+	    }
+	}
+	return res;
+    }
+    
     /**
      * Reduces a matrix into an identity, if possible. Gives all values which can be singly determined.
      *
