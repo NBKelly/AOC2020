@@ -112,38 +112,49 @@ public class Advent24 extends ConceptHelper {
 	println(active.size());        
 
 	for(int i = 0; i < 100; i++) {
-	    //first determine all of the white adjacents
-	    var whites = adjacentWhites(active);
-
+	    var whites = new TreeSet<Pair>();
 	    TreeSet<Pair> flips = new TreeSet<Pair>();
-	    //any white tile with exactly two blacks adjacent becomes black
+	    for(var black : active) {
+		var _whites = adjacentWhite(active, black);
+		//any black with 0 or more than two blacks gets replaced with a white
+		//0 or more than 2 blacks means:
+		//6 or less than 4 whites
+		if(_whites.size() == 6 || _whites.size() < 4)
+		    flips.add(black);
+		whites.addAll(_whites);
+	    }
+
+	    //any white with exactly two blacks adjacent gets replaced with a black
 	    for(var white : whites)
 		if(adjacentBlacks(active, white).size() == 2)
 		    flips.add(white);
-
-	    //any black with zero or >2 blacks becomes white
-	    for(var black : active) {
-		var adj = adjacentBlacks(active, black);
-
-		if(adj.size() == 0 || adj.size() > 2)
-		    flips.add(black);
-	    }
-
+	    
 	    for(Pair p : flips) {
-		if(active.contains(p))
-		active.remove(p);
-	    else
-		active.add(p);
+		if(!active.remove(p))
+		    active.add(p);
 	    }
-
-	    //println("NA: " + active.size());
 	}
 
 	DEBUGF("Part Two: ");
-	printf(active.size());
+	println(active.size());
 	t.total("Finished processing of file. ");
     }
 
+    private TreeSet<Pair> adjacentWhite(TreeSet<Pair> blacks, Pair p) {
+	TreeSet<Pair> res = new TreeSet<Pair>();
+
+	for(int i = 0; i < 6; i++) {
+	    //for all 6 neighbors
+	    Pair newPair = new Pair(p.X + x_token[i], p.Y + y_token[i]);
+	    //if not black
+	    if(!blacks.contains(newPair)) {
+		res.add(newPair);
+	    }
+	}
+
+	return res;
+    }
+    
     private TreeSet<Pair> adjacentBlacks(TreeSet<Pair> blacks, Pair p) {
 	TreeSet<Pair> res = new TreeSet<Pair>();
 
