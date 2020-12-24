@@ -66,6 +66,7 @@ Here's a brief summary of the 2020 advent of code deep lore.
 | Day 21 | We reach the end of the line. Now we need to build a raft and "legally enter" the vacation island the hard way. To stock supplies, we need to figure out which foods we are allergic to.
 | Day 22 | The raft has left, but floating at sea is boring. Fortunately, we find a crab to play games against. The crab beats us, so we get upset, challenge him to a double-for-nothing, and concoct a set of rules where we can't possible lose.
 | Day 23 | The crab is upset we cheated. The crab tries challenging us to a game instead. We have to play a million-cup shell game to cheat him out of another two stars.
+| Day 24 | We fell asleep at some point and the crab navigated the raft to shore. We make our way to the resort, only to find out that the lobby is inaccessible. They're re-tiling the floor. In order to get in, we decode the tiling instructions for the work crew. Afterwards, we find out that the tiles are actually a "living art" exhibit. Every day they flip some of the tiles (in something dangerously close to racist 'Conways Game of Life') based on the orientations of neighboring tiles. Neato!
 
 ## Problem Ratings
 Here are my ratings for each problem, and what the time complexity of my solutions happens to be.
@@ -96,7 +97,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 21  |
 | Day 22  |
 | Day 23  | *O(N+K)* | *O(N+K)* | N = Token count, K = number of cycles. 
-| Day 24  |
+| Day 24  | *O(C)* | *O(KT<sup>E</sup>)* | C = character count, K = cycle count, T = (initial) Tile count, E = expansion factor. Complexity of p2 is mostly based on the input state and the iteration count.
 | Day 25  |
 ## Solutions
 Here's a write-up of all the solutions as I've done them.
