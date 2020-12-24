@@ -8,6 +8,10 @@ package com.nbkelly.helper;
 public final class Pair<T, U> {
     public final T X;
     public final U Y;
+
+    @Override public int hashCode() {
+	return 17*X.hashCode() + 37*Y.hashCode();
+    }
     
     public Pair(T X, U Y) {
 	this.X = X;
