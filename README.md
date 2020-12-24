@@ -3,8 +3,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
 
 # Table of Contents
 1. [Project Structure](#Project-Structure)
-    1. [Adding a Solution](#Adding-a-solution)
-    2. [Replace.txt](#Replace.txt)
+2. [Lore](#lore)
 2. [Problem Ratings](#Problem-Ratings)
 3. [Solutions](#Solutions)
     1. [Day 01](#day-01-report-repair)
@@ -19,7 +18,9 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     10. [Day 10](#day-10-adapter-array)
     11. [Day 11](#day-11-seating-system)
     12. [Day 12](#day-12-rain-risk)
+    15. [Day 15](#day-15-rambunctious-recitation)
     18. [Day 18](#day-18-operation-order)
+    23. [Day 23](#day-23-crab-cups)
 
 ## Project Structure
 All of the solutions are available in the ```com/nbkelly/advent``` folder. They can all be run using ```run.sh``` script like so:
@@ -63,7 +64,9 @@ Here's a brief summary of the 2020 advent of code deep lore.
 | Day 19 | Work calls again, and they want us to debug their spy satellites. We need to validate signals using a finite state machine.
 | Day 20 | Our flight lands, and our train trip begins. We're still working remotely for the *MIB*. Now they need us to stitch together a bunch of satellite images so we can count sea monsters in the ocean. Eric needs you to buy the shirt.
 | Day 21 | We reach the end of the line. Now we need to build a raft and "legally enter" the vacation island the hard way. To stock supplies, we need to figure out which foods we are allergic to.
-| Day 22 | The raft has left, but floating at sea is boring. Fortunately, we find a crab to play games against. The crab beats u s, so we get upset and concoct a set of rules where we can't possible lose.
+| Day 22 | The raft has left, but floating at sea is boring. Fortunately, we find a crab to play games against. The crab beats us, so we get upset, challenge him to a double-for-nothing, and concoct a set of rules where we can't possible lose.
+| Day 23 | The crab is upset we cheated. The crab tries challenging us to a game instead. We have to play a million-cup shell game to cheat him out of another two stars.
+| Day 24 | We fell asleep at some point and the crab navigated the raft to shore. We make our way to the resort, only to find out that the lobby is inaccessible. They're re-tiling the floor. In order to get in, we decode the tiling instructions for the work crew. Afterwards, we find out that the tiles are actually a "living art" exhibit. Every day they flip some of the tiles (in something dangerously close to racist 'Conways Game of Life') based on the orientations of neighboring tiles. Neato!
 
 ## Problem Ratings
 Here are my ratings for each problem, and what the time complexity of my solutions happens to be.
@@ -85,7 +88,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 12  | *O(N)* | *O(N)* |
 | Day 13  |
 | Day 14  |
-| Day 15  |
+| Day 15  | *O(K)* | *O(K)* | K = number of cycles
 | Day 16  |
 | Day 17  |
 | Day 18  | O(N) | O(NT) | T = average token count per line 
@@ -93,8 +96,8 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 20  |
 | Day 21  |
 | Day 22  |
-| Day 23  |
-| Day 24  |
+| Day 23  | *O(N+K)* | *O(N+K)* | N = Token count, K = number of cycles. 
+| Day 24  | *O(C)* | *O(KT<sup>E</sup>)* | C = character count, K = cycle count, T = (initial) Tile count, E = expansion factor. Complexity of p2 is mostly based on the input state and the iteration count.
 | Day 25  |
 ## Solutions
 Here's a write-up of all the solutions as I've done them.
@@ -347,6 +350,46 @@ Everything from above applies, and this can be solved in the exact same way.
 ### Day 12: Rain Risk
 Day 12 is quite simple. Part one requires that you apply a set of directions to a single point. There's not really too much to say about this problem. Part two is the same, except most of your instructions refer to moving a dynamic point around your point, then performing movements in the direction of the dynamic point. Both of these are purely O(N).
 
+### Day 15: Rambunctious Recitation
+This problem basically asks you to implement the [Van-Eck sequence](https://oeis.org/A181391).
+
+The properties of this sequence are as follows:
+1) First, an input sequence of numbers is given
+2) Then, every time a number would be generated, look at the previous number in the sequence
+3) If the previous number is unique (not in the map), next = 0
+4) Otherwise next = (current time) - (last time number spoken)
+
+A quick implementation basically goes like this:
+
+```
+<Integer, Integer> memory;
+for(i = 1; i <= input.length; i++):
+    memory.put(input[i-1], i)
+    
+//After a unique sequence, the next number is always 0 
+int next = 0
+
+for(int i = input.length+1; i < lim; i++) {
+    //it it's the first time the number appears, then next_next is zero
+    int next_next = 0;
+    
+    //if the number is seen, next_next is difference between i and last time spoken
+    if(memory.containsKey(next))
+        next_next = i - memory.get(next);
+        
+    memory.put(next, i);
+    next = next_next
+}
+
+return next;
+```
+
+It's trivial to see that this takes *O(K)* time, where K is the number to generate.
+
+In terms of possible speedups, I think the answer is "we don't know." I definitely don't. I believe a summary of the properties of the sequence can be see here:
+
+![van-eck](https://raw.githubusercontent.com/NBKelly/AOC2020/master/van-eck.jpeg "We don't know")
+
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
 
@@ -392,3 +435,22 @@ eval(stack, component):
       "+": return eval(stack, val)
       "*": return val * eval(stack, 0)
   ```
+
+
+### Day 23: Crab Cups
+The crab has now challenged us to a shell game. This can be done in linear time by using a linkedlist, where every node is also kept in a map by value. So each node can be accessed in O(1), and insertion/removal can also be done in O(1)
+
+#### Part One
+For each round:
+
+1) pick the first cup in the list
+2) set aside the next three cups
+3) Find the target cup with a value of first-1. If that doesn't exist, decrement that value until we find a cup.
+4) Insert the cups set aside in 2) after the cup selected in 3)
+5) Put the first cup at the end of the list (rotate the list counterclockwise once)
+
+Note that 1, 2 both occur right at the start of the list, so should be o(1) with a linked list.
+Then, if we can quickly lookup arbitrary nodes and insert directly after then, then every cycle should be O(n). To do this, we just need to combine our linkedlist with a map.
+
+#### Part Two
+The same thing but for a million numbers and ten million cycles. If you didn't optimise, you'll be waiting until Christmas.
