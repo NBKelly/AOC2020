@@ -18,9 +18,12 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     10. [Day 10](#day-10-adapter-array)
     11. [Day 11](#day-11-seating-system)
     12. [Day 12](#day-12-rain-risk)
+    13. [Day 13](#day-13-shuttle-search)
     15. [Day 15](#day-15-rambunctious-recitation)
     18. [Day 18](#day-18-operation-order)
     23. [Day 23](#day-23-crab-cups)
+    24. [Day 24](#day-24-lobby-layout)
+    25. [Day 25](#day-24-combo-breaker)
 
 ## Project Structure
 All of the solutions are available in the ```com/nbkelly/advent``` folder. They can all be run using ```run.sh``` script like so:
@@ -85,8 +88,8 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 09  | *O(N W)*| *O(N log(K))* | W = window_size, K = max_sequence_size* |
 | Day 10  | *O(N + M)* | *O(M + NJ)* | Abuses properties of data. M = maximum size in list. J = maximum joltage jump. 
 | Day 11  | *O(CI)*| *O(C(I+H+W))*  | Where C is the number of cells and I is the number of iterations needed to terminate. This really just depends on how many iterations the given input will generate. I don't know how to estimate that. Each iteration should be computable linear to the input size (and smaller than the last iteration), and a small amount of pre-processing needs to be done on part 2, which takes *O(C(H+W))*, where H and W are the Height and Width of the grid. The worst case for the absolute worst possible input couldn't be worse than *O(C<sup>2</sup>)* for either of these problems.
-| Day 12  | *O(N)* | *O(N)* |
-| Day 13  |
+| Day 12  | *O(N)* |  *O(N)* |
+| Day 13  | *O(N)* |  ? ? ?  | No clue on part two. I might put the research in later.
 | Day 14  |
 | Day 15  | *O(K)* | *O(K)* | K = number of cycles
 | Day 16  |
@@ -98,7 +101,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 22  |
 | Day 23  | *O(N+K)* | *O(N+K)* | N = Token count, K = number of cycles. 
 | Day 24  | *O(C)* | *O(KT<sup>E</sup>)* | C = character count, K = cycle count, T = (initial) Tile count, E = expansion factor. Complexity of p2 is mostly based on the input state and the iteration count.
-| Day 25  |
+| Day 25  | *O(fuckyou<sup>n)* | O(1) | Part 2 works on my input :^)
 ## Solutions
 Here's a write-up of all the solutions as I've done them.
 ### Day 01: Report Repair
@@ -350,6 +353,13 @@ Everything from above applies, and this can be solved in the exact same way.
 ### Day 12: Rain Risk
 Day 12 is quite simple. Part one requires that you apply a set of directions to a single point. There's not really too much to say about this problem. Part two is the same, except most of your instructions refer to moving a dynamic point around your point, then performing movements in the direction of the dynamic point. Both of these are purely O(N).
 
+### Day 13: Shuttle Search
+Day 13 is a bit of a cop out puzzle. Part one can easily be done by hand, and part two simply asks if you know Chinese Remainder Theorem.
+
+For part one, check every number in order. We want to find the number where ```our_departure_time % bus_departure_interval``` is maximized, or the value where ```(-1 * our_departure_time) % bus_departure_interval``` is minimized.
+
+For part two, implement chinese remainder theorem, where each denominator is ```INTERVAL - ORDER``` and the nominator is is ```INTERVAL```.
+
 ### Day 15: Rambunctious Recitation
 This problem basically asks you to implement the [Van-Eck sequence](https://oeis.org/A181391).
 
@@ -454,3 +464,59 @@ Then, if we can quickly lookup arbitrary nodes and insert directly after then, t
 
 #### Part Two
 The same thing but for a million numbers and ten million cycles. If you didn't optimise, you'll be waiting until Christmas.
+
+### Day 24: Lobby Layout
+We've made it to the resort, but they need help redesigning the lobby!
+
+Instructions are given in the form ```[dir]*```, where dir is one of ```{e, w, ne, nw, se, sw}```. These map to directions in a hexagonal grid.
+Every line contains one instruction.
+
+#### Part One
+We construct a grid of active (black) tiles by following the rules:
+
+1) each round we start at the center tile
+2) follow every direction given in the input line
+3) flip that tile (white->black or black->white)
+
+There are a few different ways you can represent a hexagonal grid. I chose to represent it as a staggered 2d grid, using the following mapping:
+
+```
+      EAST: (x + 2, y)
+      WEST: (x - 2, y)
+NORTH-EAST: (x + 1, y + 1)
+NORTH-WEST: (x - 1, y + 1)
+SOUTH-EAST: (x + 1, y - 1)
+SOUTH-WEST: (x - 1, y - 1)
+```
+
+Then, just decode each line into a list of directions, and keep a set of all active (black) tiles.
+
+#### Part Two
+It's just dangerously close to racist Conway's Game of Life.
+
+1) keep a set of blacks, BLACKS
+2) for each black, get the set of white neighbors, WHITE_NEIGHBORS
+3) add those white neighbors to another set, WHITES
+4) if(WHITE_NEIGHBORS) is size 6, or size < 4, add it to the set FLIPS
+5) for each WHITE in WHITE_NEIGHBORS, count the number of BLACKS neighboring it. If that number is 2, add it to the set FLIPS
+6) BLACKS = Symmetric difference(BLACKS, FLIPS)
+
+Time complexity is *O(C)* for part one, and *O(KT<sup>E</sup>)* for part 2, where C = character count, K = cycle count, T = (initial) Tile count, E = expansion factor. Complexity of p2 is mostly based on the input state and the iteration count.
+
+### Day 25: Combo Breaker
+
+We can't get into our room. In order to get in, we must hack the security system. The details are as follows:
+
+1) Both the card and the door have a public keys, K<sup>c</sup> and K<sup>d</sup>.
+2) A public key is computed by applying the transform function to (value: 1) and SUBJECT_NUMBER a number of times equal to the private key.
+3) The transform function takes a value and a subject number as input. It gives in return ```(value * subject_number) % 20201227```.
+4) The default subject number used to generate a public key is 7
+5) The card generates an encryption key, K<sup>E</sup> by performing the transform function a number of times equal to it's private key, K<sup>c</sup>, with the subject_number equal to the public key of the door, K<sup>d</sup>
+6) The door generates an encryption key, K<sup>E</sup> by performing the transform function a number of times equal to it's private key, K<sup>d</sup>, with the subject_number equal to the public key of the card, K<sup>c</sup>
+
+Because the log is quite low, you can brute force this easily. Once again, the hardest part of this problem is figuring out what the heck eric was trying to say. This problem felt like it was written by a person who had no clue what any of the terms used might have meant.
+
+To beat part 2, just don't get filtered anywhere else.
+
+## SUMMARY
+Most of the problems this year felt pretty weak. I'll put a poll up and see what I get.
