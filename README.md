@@ -70,6 +70,7 @@ Here's a brief summary of the 2020 advent of code deep lore.
 | Day 22 | The raft has left, but floating at sea is boring. Fortunately, we find a crab to play games against. The crab beats us, so we get upset, challenge him to a double-for-nothing, and concoct a set of rules where we can't possible lose.
 | Day 23 | The crab is upset we cheated. The crab tries challenging us to a game instead. We have to play a million-cup shell game to cheat him out of another two stars.
 | Day 24 | We fell asleep at some point and the crab navigated the raft to shore. We make our way to the resort, only to find out that the lobby is inaccessible. They're re-tiling the floor. In order to get in, we decode the tiling instructions for the work crew. Afterwards, we find out that the tiles are actually a "living art" exhibit. Every day they flip some of the tiles (in something dangerously close to racist 'Conways Game of Life') based on the orientations of neighboring tiles. Neato!
+| Day 25 | We've finally touched down in the hotel, and we're ready to relax. Unfortunately, our keycard "doesn't work". Oh well, we can just hack the hotel doors to "get access to our room". Once we're in and ready to relax, we get a call. It's time to go to work. We pay all of our hard earned stars in pennance and go back to the grind.
 
 ## Problem Ratings
 Here are my ratings for each problem, and what the time complexity of my solutions happens to be.
@@ -90,7 +91,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 11  | *O(CI)*| *O(C(I+H+W))*  | Where C is the number of cells and I is the number of iterations needed to terminate. This really just depends on how many iterations the given input will generate. I don't know how to estimate that. Each iteration should be computable linear to the input size (and smaller than the last iteration), and a small amount of pre-processing needs to be done on part 2, which takes *O(C(H+W))*, where H and W are the Height and Width of the grid. The worst case for the absolute worst possible input couldn't be worse than *O(C<sup>2</sup>)* for either of these problems.
 | Day 12  | *O(N)* |  *O(N)* |
 | Day 13  | *O(N)* |  ? ? ?  | No clue on part two. I might put the research in later.
-| Day 14  |
+| Day 14  | *O(N)* |  *O(X)* | X is number of memory addresses (niave solution)
 | Day 15  | *O(K)* | *O(K)* | K = number of cycles
 | Day 16  |
 | Day 17  |
