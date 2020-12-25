@@ -23,6 +23,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     18. [Day 18](#day-18-operation-order)
     23. [Day 23](#day-23-crab-cups)
     24. [Day 24](#day-24-lobby-layout)
+    25. [Day 25](#day-24-combo-breaker)
 
 ## Project Structure
 All of the solutions are available in the ```com/nbkelly/advent``` folder. They can all be run using ```run.sh``` script like so:
@@ -100,7 +101,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 22  |
 | Day 23  | *O(N+K)* | *O(N+K)* | N = Token count, K = number of cycles. 
 | Day 24  | *O(C)* | *O(KT<sup>E</sup>)* | C = character count, K = cycle count, T = (initial) Tile count, E = expansion factor. Complexity of p2 is mostly based on the input state and the iteration count.
-| Day 25  |
+| Day 25  | *O(fuckyou<sup>n)* | O(1) | Part 2 works on my input :^)
 ## Solutions
 Here's a write-up of all the solutions as I've done them.
 ### Day 01: Report Repair
@@ -501,3 +502,21 @@ It's just dangerously close to racist Conway's Game of Life.
 6) BLACKS = Symmetric difference(BLACKS, FLIPS)
 
 Time complexity is *O(C)* for part one, and *O(KT<sup>E</sup>)* for part 2, where C = character count, K = cycle count, T = (initial) Tile count, E = expansion factor. Complexity of p2 is mostly based on the input state and the iteration count.
+
+### Day 25: Combo Breaker
+
+We can't get into our room. In order to get in, we must hack the security system. The details are as follows:
+
+1) Both the card and the door have a public keys, K<sup>c</sup> and K<sup>d</sup>.
+2) A public key is computed by applying the transform function to (value: 1) and SUBJECT_NUMBER a number of times equal to the private key.
+3) The transform function takes a value and a subject number as input. It gives in return ```(value * subject_number) % 20201227```.
+4) The default subject number used to generate a public key is 7
+5) The card generates an encryption key, K<sup>E</sup> by performing the transform function a number of times equal to it's private key, K<sup>c</sup>, with the subject_number equal to the public key of the door, K<sup>d</sup>
+6) The door generates an encryption key, K<sup>E</sup> by performing the transform function a number of times equal to it's private key, K<sup>d</sup>, with the subject_number equal to the public key of the card, K<sup>c</sup>
+
+Because the log is quite low, you can brute force this easily. Once again, the hardest part of this problem is figuring out what the heck eric was trying to say. This problem felt like it was written by a person who had no clue what any of the terms used might have meant.
+
+To beat part 2, just don't get filtered anywhere else.
+
+## SUMMARY
+Most of the problems this year felt pretty weak. I'll put a poll up and see what I get.
