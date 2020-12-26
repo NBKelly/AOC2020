@@ -22,7 +22,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     13. [Day 14](#day-14-docking-data)
     15. [Day 15](#day-15-rambunctious-recitation)
     16. [Day 16](#day-16-ticket-translation)
-    17. [Day 16](#day-16-conway-cubes)
+    17. [Day 17](#day-17-conway-cubes)
     18. [Day 18](#day-18-operation-order)
     23. [Day 23](#day-23-crab-cups)
     24. [Day 24](#day-24-lobby-layout)
