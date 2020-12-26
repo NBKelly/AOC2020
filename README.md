@@ -1,5 +1,5 @@
 # ADVENT OF CODE 2020
-This is a set of all my solutions for Advent of Code 2020. They are (mostly) cleaned up, and are all produced in Java using my own workflow tools (with a few hacks thrown in).
+This is a set of all my solutions for Advent of Code 2020. They are (mostly) cleaned up, and are all produced in Java using my own workflow tools (with a few hacks thrown in). The competition is over and I have completed (at least minimally) every puzzle, There's still some work to do. I need to finish my puzzle write-ups and finish cleaning up a few of my solutions.
 
 # Table of Contents
 1. [Project Structure](#Project-Structure)
