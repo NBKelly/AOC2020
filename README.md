@@ -21,6 +21,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     13. [Day 13](#day-13-shuttle-search)
     13. [Day 14](#day-14-docking-data)
     15. [Day 15](#day-15-rambunctious-recitation)
+    16. [Day 16](#day-16-ticket-translation)
     18. [Day 18](#day-18-operation-order)
     23. [Day 23](#day-23-crab-cups)
     24. [Day 24](#day-24-lobby-layout)
@@ -92,9 +93,9 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 11  | *O(CI)*| *O(C(I+H+W))*  | Where C is the number of cells and I is the number of iterations needed to terminate. This really just depends on how many iterations the given input will generate. I don't know how to estimate that. Each iteration should be computable linear to the input size (and smaller than the last iteration), and a small amount of pre-processing needs to be done on part 2, which takes *O(C(H+W))*, where H and W are the Height and Width of the grid. The worst case for the absolute worst possible input couldn't be worse than *O(C<sup>2</sup>)* for either of these problems.
 | Day 12  | *O(N)* |  *O(N)* |
 | Day 13  | *O(N)* |  ? ? ?  | No clue on part two. I might put the research in later.
-| Day 14  | *O(N)* |  *O(X)* | X is number of memory addresses (niave solution)
+| Day 14  | *O(N)* |  *O(X)* or *O(B)* | X is number of memory addresses (niave solution), B is the number of branch points in the binary decision tree.
 | Day 15  | *O(K)* | *O(K)* | K = number of cycles
-| Day 16  |
+| Day 16  | *O(NC)* | O(C<sup>2</sup> | C is number of classes
 | Day 17  |
 | Day 18  | O(N) | O(NT) | T = average token count per line 
 | Day 19  |
@@ -448,6 +449,13 @@ It's trivial to see that this takes *O(K)* time, where K is the number to genera
 In terms of possible speedups, I think the answer is "we don't know." I definitely don't. I believe a summary of the properties of the sequence can be see here:
 
 ![van-eck](https://raw.githubusercontent.com/NBKelly/AOC2020/master/van-eck.jpeg "We don't know")
+
+### Day 16: Ticket Translation
+Part one is just input validation again. Read a bunch of values, then determine which ones can't possibly be valid.
+
+Part two is just gaussian elimination.
+
+https://en.wikipedia.org/wiki/Gaussian_elimination
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
