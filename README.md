@@ -22,6 +22,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     13. [Day 14](#day-14-docking-data)
     15. [Day 15](#day-15-rambunctious-recitation)
     16. [Day 16](#day-16-ticket-translation)
+    17. [Day 17](#day-17-conway-cubes)
     18. [Day 18](#day-18-operation-order)
     23. [Day 23](#day-23-crab-cups)
     24. [Day 24](#day-24-lobby-layout)
@@ -96,7 +97,7 @@ In almost every case, N is equal to the line count. Otherwise, N will be noted.
 | Day 14  | *O(N)* |  *O(X)* or *O(B)* | X is number of memory addresses (niave solution), B is the number of branch points in the binary decision tree.
 | Day 15  | *O(K)* | *O(K)* | K = number of cycles
 | Day 16  | *O(NC)* | O(C<sup>2</sup> | C is number of classes
-| Day 17  |
+| Day 17  |*O(CK<sup>E</sup>)* | *O(CK<sup>E</sup>)* | C = initial cube count, K = cycle count, E = expansion factor. Complexity is mostly based on the input state and the iteration count.
 | Day 18  | O(N) | O(NT) | T = average token count per line 
 | Day 19  |
 | Day 20  |
@@ -456,6 +457,11 @@ Part one is just input validation again. Read a bunch of values, then determine 
 Part two is just gaussian elimination.
 
 https://en.wikipedia.org/wiki/Gaussian_elimination
+
+### Day 17: Conway Cubes
+This is another cellular automata puzzle. You're asked to simulate a set of *conway cubes* for six cycles, then count the number active. I've already put a general solution in Day 24, lobby layout, so I wont (p)repeat myself here. The only interesting thing here is generating the neighbors to check. That's just a small combinatorics problem.
+
+This puzzle is just designed as a trap for people who used a 3d grid.
 
 ### Day 18: Operation Order
 This problem is way too easy for how late it is. The first one is just casting eval on your input strings in most languages, and the second one can be done nearly as easily. I chose to parse and evaluate the input using my own programming. Because there's no complicated problem, everything here is done in linear time.
