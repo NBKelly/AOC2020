@@ -71,35 +71,35 @@ public class Advent17 extends ConceptHelper {
 
         
     private class ActiveCube implements Comparable<ActiveCube> {
-	int x;
-	int y;
-	int z;
-	int w;
+	int dimension;
+	int[] vars;
 	
-	public ActiveCube(int x, int y, int z, int w) {
-	    this.x = x;
-	    this.y = y;
-	    this.z = z;
-	    this.w = w;
+	public ActiveCube(int[] vars) {
+	    this.vars = vars;
+	    this.dimension = vars.length;
 	}
 
 	public boolean equals(ActiveCube c) {
-	    return c.x == x &&
-		c.y == y &&
-		c.z == z &&
-		c.w == w;
+	    if(c.dimension != dimension)
+		return false;
+	    for(int i = 0; i < dimension; i++)
+		if(vars[i] != c.vars[i])
+		    return false;
+
+	    return true;
 	}
 
 	public int compareTo(ActiveCube c) {
-	    if(c.x - x == 0)
-		if(c.y - y == 0)
-		    if (c.z - z == 0)
-			if(c.w - w == 0)
-			    return 0;
-			else return c.w - w;
-		    else return c.z - z;
-		else return c.y - y;
-	    else return c.x - x;
+	    int diff = c.dimension - dimension;
+	    if(diff != 0)
+		return diff;
+
+	    for(int i = 0; i < dimension; i++) {
+		if((diff = c.vars[i] - vars[i]) != 0)
+		    return diff;
+	    }
+
+	    return diff;
 	}
     }
     
@@ -109,47 +109,62 @@ public class Advent17 extends ConceptHelper {
 
 	var input = readInput();
 
-	TreeSet<ActiveCube> active = new TreeSet<ActiveCube>();
-
-	for(int y = 0; y < input.size(); y++) {
-	    String line = input.get(y);
-	    for(int x = 0; x < line.length(); x++) {
-		if(line.charAt(x) == '#') //active
-		    active.add(new ActiveCube(x, y, 0, 0));
-	    }
-	}
-
-	for(int cycle = 0; cycle < 6; cycle++) {
-	    TreeSet<ActiveCube> nextCycle = new TreeSet<ActiveCube>();
-	    //get a set of all cubes next to an active cube
-	    TreeSet<ActiveCube> inactiveNeighbors = new TreeSet<ActiveCube>();
-	    for(ActiveCube a : active) {
-		inactiveNeighbors.addAll(neighbors(a.x, a.y, a.z, a.w));		
-	    }
-
-	    for(ActiveCube a : active) {
-		var setActive = getActiveNeighbors(a, active);
-		if(2 <= setActive.size() && setActive.size() <= 3)
-		    nextCycle.add(a);
-	    }
-
-	    //exactly 3 neighbors of blank => active
-	    for(ActiveCube a : inactiveNeighbors) {
-		var setActive = getActiveNeighbors(a, active);
-		if(setActive.size() == 3)
-		    nextCycle.add(a);
-	    }
-
-	    active = nextCycle;
-	}
-
-	println(active.size());
 	
-	t.total("Finished processing of file. ");    
+	for(int dim = 3; dim <= 4; dim++) {
+	    //	int dim = 4;
+	    TreeSet<ActiveCube> activeCubes = new TreeSet<ActiveCube>();
+	    ArrayList<int[]> diffs = genDiff(dim);
+	    
+	    for(int y = 0; y < input.size(); y++) {
+		String line = input.get(y);	    
+		for(int x = 0; x < line.length(); x++) {
+		    if(line.charAt(x) == '#') { //active
+			int[] v = new int[dim];
+			v[0] = x;
+			v[1] = y;
+			activeCubes.add(new ActiveCube(v));
+		    }
+		}
+	    }
+	    
+	    for(int cycle = 0; cycle < 6; cycle++) {
+		TreeSet<ActiveCube> nextCycle = new TreeSet<ActiveCube>();
+		//get a set of all cubes next to an active cube
+		TreeSet<ActiveCube> inactiveNeighbors = new TreeSet<ActiveCube>();
+		for(ActiveCube active : activeCubes) {
+		    inactiveNeighbors.addAll(neighbors(active, diffs));		
+		}
+		
+		for(ActiveCube active : activeCubes) {
+		    var setActive = getActiveNeighbors(active, activeCubes, diffs);
+		    if(2 <= setActive.size() && setActive.size() <= 3)
+			nextCycle.add(active);
+		}
+		
+		//exactly 3 neighbors of blank => active
+		for(ActiveCube blank : inactiveNeighbors) {
+		    var setActive = getActiveNeighbors(blank, activeCubes, diffs);
+		    if(setActive.size() == 3)
+			nextCycle.add(blank);
+		}
+		
+		activeCubes = nextCycle;
+	    }
+
+	    if(dim == 3)
+		DEBUGF("PART ONE: ");
+	    if(dim == 4)
+		DEBUGF("PART ONE: ");
+	    println(activeCubes.size());//t.split("DIM=" + dim + " ANS = " + activeCubes.size());
+	    //println(activeCubes.size());
+	}
+	
+	t.total("Finished processing of file. ");	
     }
 
-    public TreeSet<ActiveCube> getActiveNeighbors(ActiveCube cube, TreeSet<ActiveCube> active) {
-	var tmp = neighbors(cube.x, cube.y, cube.z, cube.w);
+    public TreeSet<ActiveCube> getActiveNeighbors(ActiveCube cube, TreeSet<ActiveCube> active,
+						  ArrayList<int[]> diffs) {
+	var tmp = neighbors(cube, diffs);
 
 	TreeSet<ActiveCube> res = new TreeSet<ActiveCube>();
 	for(var v : tmp)
@@ -160,15 +175,84 @@ public class Advent17 extends ConceptHelper {
 
 	return res;
     }
+
+    public ArrayList<int[]> genDiff(int dim) {
+	ArrayList<int[]> diffs = new ArrayList<>();
+
+	int[] diff_a = new int[dim];
+	int[] diff_b = new int[dim];
+	int[] diff_c = new int[dim];
+
+	diff_b[0] = 1;
+	diff_c[0] = -1;
+	
+	diffs.add(diff_a);
+	diffs.add(diff_b);
+	diffs.add(diff_c);
+
+	diffs.addAll(genDiff(1, diff_a));
+	diffs.addAll(genDiff(1, diff_b));
+	diffs.addAll(genDiff(1, diff_c));
+
+	//println("Diffs: " + diffs.size());
+	
+	//find the one with total value = 0
+	for(int i = 0; i < diffs.size(); i++) {
+	    long ct = 0;
+	    for(int val : diffs.get(i))
+		if(val != 0)
+		    ct++;
+	    if(ct == 0)
+		diffs.remove(i);
+	}
+
+	//println("Diffs: " + diffs.size());
+	
+	return diffs;
+    }
+
+    public ArrayList<int[]> genDiff(int index, int[] template) {
+	int[] a = template.clone();
+	int[] b = template.clone();
+	int[] c = template.clone();
+
+	ArrayList<int[]> res = new ArrayList<>();
+	if(index >= template.length)
+	    return res;
+
+	b[index] = 1;
+	c[index] = -1;
+
+	res.add(a);
+	res.add(b);
+	res.add(c);
+	
+	res.addAll(genDiff(index+1, a));
+	res.addAll(genDiff(index+1, b));
+	res.addAll(genDiff(index+1, c));
+
+	return res;
+    }
     
-    public ArrayList<ActiveCube> neighbors(int x, int y, int z, int w) {
+    public ArrayList<ActiveCube> neighbors(ActiveCube c, ArrayList<int[]> diffs) {	
+	int dim = c.dimension;
+
 	ArrayList<ActiveCube> res = new ArrayList<>();
+	
+	for(int[] diff : diffs) {
+	    int[] adj = new int[dim];
+	    for(int i = 0; i < dim; i++)
+		adj[i] = diff[i] + c.vars[i];
+
+	    res.add(new ActiveCube(adj));
+	}
+		/*	
 	for(int dx = -1; dx < 2; dx++)
 	    for(int dy = -1; dy < 2; dy++)
 		for(int dz = -1; dz < 2; dz++)
 		    for(int dw = -1; dw < 2; dw++)
 		    if(dx != 0 || dy != 0 || dz != 0 || dw != 0)
-			res.add(new ActiveCube(x+dx, y+dy, z+dz, w + dw));
+		    res.add(new ActiveCube(x+dx, y+dy, z+dz, w + dw));*/
 
 	return res;
     }
