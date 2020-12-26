@@ -5,6 +5,8 @@ import java.util.Scanner;
 
 import java.util.*;
 import java.math.BigInteger;
+import java.math.BigDecimal;
+
 import com.nbkelly.helper.Util;
 
 public class Advent14 extends ConceptHelper {
@@ -75,44 +77,38 @@ public class Advent14 extends ConceptHelper {
 	Timer t = new Timer().start();
 	
 	var input = readInput();
-		
-	DEBUGF("PART ONE: ");
-	println(partOne(input));
-	DEBUGF("PART TWO: ");
-	println(partTwo(input));
 	
+	var mappings = chunkify(input);
+	Collections.reverse(mappings);
+
+	final int addr_size = 36;
+
+	BTree b = new BTree();
+	for(Mapping m : mappings) {
+	    //printf("MASK: %s%n", m.mask);
+	    //println("Size: " + m.size());
+
+	    for(int i = 0; i < m.size(); i++) {		
+		String addr = transform_to_binary(m.addresses.get(m.size() - 1 - i), addr_size);
+		//printf("ADDR: %s%n", addr);
+		String masked = mask_address(m.mask, addr, addr_size);
+		//printf("MSKD: %s%n", masked);
+		var value = m.values.get(m.size() - 1 - i);
+		//printf("VSET: %d%n", value);
+		
+		b.add(masked, value);
+		
+		//return;
+	    }
+	}
+	DEBUGF("PART ONE: "); println(partOne(input));
+	DEBUGF("PART TWO:  "); println(b.enumerate());
+	//DEBUGF("MEMBERS:   %s%n", b.members().toString());
+	//DEBUGF("ADDRESSES: %s%n", b.addresses().toString());
+
 	t.total("Finished processing of file. ");
     }
-    
-    public long partTwo(ArrayList<String> input) {
-	TreeMap<Long, Long> memory = new TreeMap<>();
-	
-	String mask = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-	for(String s : input) {
-	    assert mask.length() == 36 : "MASK SIZE WRONG";
-	    if(s.startsWith("mem[")) {
-		long addr = Integer.parseInt(s.split("\\[")[1].split("\\]")[0]);
-		var addrs = mask_addr(addr, mask);
-		//long[] addr2 = mask2(add, mask);
-		long value = Long.parseLong(s.split("= ")[1]);
-		for(long a : addrs)
-		    memory.put(a, value);//value = mask(value, mask);
-	    }
-	    else if( s.startsWith("mask =")) {
-		mask = s.split("= ")[1];
-	    }
-	    else
-		DEBUG("UNRECOGNIZED LINE: '" + s + "'");
-	}
 
-	long sum = 0;
-	for(long key : memory.keySet()) {
-	    sum += memory.get(key);
-	}
-
-	return sum;
-    }
-        
     public long partOne(ArrayList<String> input) {
 	TreeMap<Integer, Long> memory = new TreeMap<>();
 	
@@ -153,39 +149,249 @@ public class Advent14 extends ConceptHelper {
 
 	return val;
     }
-
-    public TreeSet<Long> mask_addr(long val, String mask) {
-	ArrayList<Long> floating = new ArrayList<Long>();
+    
+    public class BTree {
+	Node head = new Node(0);
 	
-	for(int i = 0; i < mask.length(); i++) {
-	    int index = mask.length() - 1 - i;
+	public BigInteger members() {
+	    return head.members();
+	}
 
-	    switch(mask.charAt(i)) {
-	    case 'X':
-		floating.add((long)index);
-		//set the position to zero too
-		val = Util.setBit(val, index, false);
-		break;
-	    case '1':
-		val = Util.setBit(val, index, true);
+	public BigInteger addresses() {
+	    return head.addresses();
+	}
+	
+	public BigInteger enumerate() {
+	    return head.enumerate();
+	}
+	
+	private class Node {
+	    long value;
+	    
+	    Node node0;
+	    Node node1;
+	    Node nodeX;
+
+	    public BigInteger members() {
+		BigInteger res = BigInteger.ONE;
+		
+		if(node0 != null)
+		    res = res.add(node0.members());
+		if(node1 != null)
+		    res = res.add(node1.members());
+		if(nodeX != null)
+		    res = res.add(nodeX.members());
+		
+		return res;
+	    }
+
+	    public BigInteger addresses() {
+		BigInteger res = BigInteger.ZERO;
+
+		if(nodeX == null && node0 == null && node1 == null)
+		    return BigInteger.ONE;
+		
+		if(nodeX != null)
+		    return nodeX.addresses().multiply(BigInteger.valueOf(2));
+		if(node0 != null)
+		    res = res.add(node0.addresses());
+		if(node1 != null)
+		    res = res.add(node1.addresses());
+		
+		return res;
+	    }
+	    
+	    public BigInteger enumerate() {
+		//if no children, then return our value
+		//otherwise return the sum of children
+		if(node0 == null &&
+		   node1 == null &&
+		   nodeX == null) {
+		    return BigInteger.valueOf(value);
+		}
+
+		//if x is not null
+		if(nodeX != null) {
+		    return BigInteger.valueOf(2).multiply(nodeX.enumerate());
+		}
+
+		//if 1 and 2 are non-null
+		if(node1 != null && node0 != null) {
+		    return node1.enumerate().add(node0.enumerate());
+		}
+
+		//if 1 is valid
+		if(node1 != null)
+		    return node1.enumerate();
+
+		return node0.enumerate();
+	    }
+	    
+	    public Node(String s, long value, int depth, String original, int order) {
+		this.value = value;
+		add(s, value, depth+1, original, order);
+	    }
+
+	    private Node(long value) { this.value = value; }
+	    
+	    public void add(String s, long value, int depth, String original, int order) {
+		if(s.length() > 0) {
+		    char start = s.charAt(0);
+		    String next = s.substring(1);
+		    
+		    if(start == '1') {
+			//if we have an x, we need to split that into a 0 and a 1
+			if(nodeX != null) {
+			    node1 = nodeX;
+			    node0 = dup(nodeX);
+			    nodeX = null;
+			}
+
+			//if node1 is not null, we add to it
+			if(node1 != null) {
+			    //then we add the next part of the sum to node 1
+			    node1.add(next, value, depth+1, original, order);
+			}
+			else {
+			    //we create the node node1
+			    node1 = new Node(next, value, depth+1, original, order);
+			}
+		    }
+		    else if (start == '0') {
+			//if we have an X, we need to split that into a 0 and a 1
+			if(nodeX != null) {
+			    node1 = nodeX;
+			    node0 = dup(nodeX);
+			    nodeX = null;
+			}
+
+			//if node0 is not null, we add to it
+			if(node0 != null) {
+			    //then we add the next part of the sum to node 1
+			    node0.add(next, value, depth+1, original, order);
+			}
+			else {
+			    //we create the node node1
+			    node0 = new Node(next, value, depth+1, original, order);
+			}
+		    }
+		    else if (start == 'X') {
+			//if either 1 or 0 exists, then we must crawl both branches
+			if(node0 != null || node1 != null) {
+			    //if node0 is null, we create it
+			    if(node0 == null)
+				node0 = new Node(next, value, depth+1, original, order);
+			    //otherwise we add to it
+			    else
+				node0.add(next, value, depth+1, original, order);
+
+			    //if node1 is null, we create it
+			    if(node1 == null)
+				node1 = new Node(next, value, depth+1, original, order);
+			    //otherwise we add to it			    
+			    else
+				node1.add(next, value, depth+1, original, order);
+			}
+			else {
+			    //if nodeX is null, we create it
+			    if(nodeX == null)
+				nodeX = new Node(next, value, depth+1, original, order);
+			    else
+				nodeX.add(next, value, depth+1, original, order);
+			}
+		    }
+		}
+	    }
+
+	    private Node dup(Node n) {
+		if(n == null)
+		    return null;
+
+		//duplicate the value itself
+		Node res = new Node(n.value);
+		
+		//duplicate all children
+		res.node0 = dup(n.node0);
+		res.node1 = dup(n.node1);
+		res.nodeX = dup(n.nodeX);
+		
+		return res;
 	    }
 	}
 
-	//components, combinator, seed
-	TreeSet<Long> res = Util.combinations(val, floating, combinator);
-					     
+	private int _order = 0;
+	public void add(String s, long value) {
+	    head.add(s, value, 0, s, ++_order);
+	}
+    }
+    
+    public String transform_to_binary(long addr, int len) {
+	//turn the address into a binary string
+	return String.format("%36s", Long.toBinaryString(addr)).replace(' ', '0');
+    }
+    
+    public String mask_address(String mask, String addr, int len) {
+	StringBuilder res = new StringBuilder();
+	for(int i =0; i < len; i++) {
+	    //if mask is x
+	    if(mask.charAt(i) == 'X')
+		res.append('X');
+	    else if (mask.charAt(i) == '1' || addr.charAt(i) == '1')
+		res.append('1');
+	    else
+		res.append('0');
+	}
+
+	return res.toString();
+    }
+    
+    public ArrayList<Mapping> chunkify( ArrayList<String> input) {
+	//split an input of mask...mask...
+	//into an input of <mask...>
+
+	//ArrayList<String> ct = new ArrayList<String>();
+	Mapping current = new Mapping();
+	ArrayList<Mapping> res = new ArrayList<>();
+
+	int order = 0;
+	for(String s : input) {
+	    if(s.startsWith("mem[")) {
+		long addr = Long.parseLong(s.split("\\[")[1].split("\\]")[0]);
+		long val = Long.parseLong(s.split("= ")[1]);
+
+		current.addresses.add(addr);
+		current.values.add(val);
+	    }
+	    else if( s.startsWith("mask =")) {
+		if(!current.isEmpty()) {
+		    res.add(current);
+		    current = new Mapping();
+		}		    
+		current.mask = s.split("= ")[1];		
+	    }
+	}
+
+	res.add(current);
+
 	return res;
     }
 
-    //this is the combinations class implemented as a combinator
-    private final Util.Combinator<Long> combinator = new Util.Combinator<Long>() {
-	    public TreeSet<Long> combinations(Long val, Long component) {
-		TreeSet<Long> res = new TreeSet<Long>();
-		res.add(Util.setBit(val, (int)(long)component, true));// &= ~component);
-		return res;
-	    }
-	};
+    
+    private class Mapping {
+	public ArrayList<Long> addresses = new ArrayList<Long>();
+	public ArrayList<Long> values = new ArrayList<Long>();
 
+	public String mask = null;
+	
+	public int size() {
+	    return addresses.size();
+	}
+
+	public boolean isEmpty() {
+	    return size() == 0;
+	}
+    }
+    
     //do any argument processing here
     public boolean processArgs(String[] argv) {
 	for(int i = 0; i < argv.length; i++) {
