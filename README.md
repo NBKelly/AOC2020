@@ -19,6 +19,7 @@ This is a set of all my solutions for Advent of Code 2020. They are (mostly) cle
     11. [Day 11](#day-11-seating-system)
     12. [Day 12](#day-12-rain-risk)
     13. [Day 13](#day-13-shuttle-search)
+    13. [Day 14](#day-14-docking-data)
     15. [Day 15](#day-15-rambunctious-recitation)
     18. [Day 18](#day-18-operation-order)
     23. [Day 23](#day-23-crab-cups)
@@ -360,6 +361,53 @@ Day 13 is a bit of a cop out puzzle. Part one can easily be done by hand, and pa
 For part one, check every number in order. We want to find the number where ```our_departure_time % bus_departure_interval``` is maximized, or the value where ```(-1 * our_departure_time) % bus_departure_interval``` is minimized.
 
 For part two, implement chinese remainder theorem, where each denominator is ```INTERVAL - ORDER``` and the nominator is is ```INTERVAL```.
+
+### Day 14: Docking Data
+At face value, this looks like an interesting puzzle. Part one asks you to mask values according to rules and track the results in a memory, and part two asks you do something similar with addresses. In my opinion, there are two major flaws with this problem:
+1) The sample input for part one is designed to make you waste time on part two, and doesn't resemble even a single piece of input you can get
+2) The inputs are so simple, and have such low overlap rates (0.3%), that the general purpose good solution (binary decision trees) happens to be worse than the brute force solution. This is a combinatorics question that's been designed so that literally the best case is testing every single combination. For a problem this far in to the event, that's just absolutely abysmal.
+
+Now for the problem itself:
+#### Part One
+Given data in the form ```(mask = [[01X]{36}]) | (mem[NUMBER] = [NUMBER]))*```, perform the follwing:
+1) Whenever a mask is given, save that as the current mask
+2) Whenever a value is given, apply the mask to that value, then put that value in memory
+3) To apply the mask to a value, perform the following:
+    a) If the index on the mask is 0 or 1, overwrite that index on the value with the given bit
+    b) If the index on the mask reads X, then keep the original bit at that index
+
+Then, count the entire memory.
+
+#### Part Two
+Now the problem has changed. Instead of masking the value, you need to mask the address. 
+1) If the mask contains 1, then that bit MUST be set to 1.
+2) If the mask contains 0, then that bit is the original bit of the address.
+3) If the mask contains X, then that bit takes on **both** the values 1 and 0 (both addresses are written to).
+
+It sounds like the naive approach of writing to every single memory address would be bad, but that's not the cast. "2020 has been a tough year, so the puzzles are easy this time :)". Because of the inputs, the fastest way to do this problem for every sinle participant will be to write to every single address in order and then count the values.
+
+For a general-purpose faster approach, perform the following steps:
+1) Read all of the input, applying the mask to the address at each step. Then, reverse that list (so the final write happens first, and the first write happens last). Note that processing the data in this direction, once an address is set it can NEVER be changed.
+2) Create a decision tree. Every time we "write" to an address, place that address into the decision tree
+3) The result is an enumeration on the tree
+
+The decision tree is constructed as follows:
+1) Each non-leaf node has three potential children, 0 1 X.
+2) Leaf nodes have a value and no children
+3) To insert an address-value mapping into a node, consider the first character of the address. Insert the substring (1, len) of the address into the matching node.
+4) If a node contains an X child, and a 1-child is to be inserted, split the X child into a 0 and a 1 child
+5) A node can never be overwritten (this memory is write-once)
+6) If a node contains a 0 or a 1 child, and an x-child is to be inserted, instead insert into the 0 and 1 childs
+
+The first sample using this method makes three tree traversals for example. The brute force method would take hours (and run you out of ram, as it did for a lot of competitors).
+```
+mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
+mem[8] = 11
+mem[7] = 101
+mem[8] = 0
+```
+
+But despite that being used as a sample, it flat out does not resemble ANY of the problem input.
 
 ### Day 15: Rambunctious Recitation
 This problem basically asks you to implement the [Van-Eck sequence](https://oeis.org/A181391).
